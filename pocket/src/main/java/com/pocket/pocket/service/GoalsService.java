@@ -17,4 +17,8 @@ public class GoalsService {
         return goalsRepo.findByUserId(userId);
     }
 
+    public Goals addGoal(Goals goal) {
+        return goalsRepo.save(goal);
+    }
+
 }

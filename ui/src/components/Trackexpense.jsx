@@ -184,7 +184,7 @@ const TrackExpense = () => {
         {filteredExpenses.map(expense => (
           <div
             key={expense.expenseId}
-            className='bg-white p-4 rounded-lg shadow-md flex justify-between items-center'
+            className='bg-white p-4 rounded-lg shadow-md flex justify-between items-center transition-all transform hover:bg-gray-100 hover:scale-105'
           >
             {/* Left section with category, date, and description */}
             <div className='flex-1'>

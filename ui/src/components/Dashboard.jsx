@@ -98,16 +98,29 @@ const Dashboard = () => {
           Recent Transactions
         </h6>
         <ul className='space-y-4'>
-          {/* Map through recent transactions if available */}
-          {userData.recentTransactions &&
-            userData.recentTransactions.map((transaction, index) => (
-              <li className='flex justify-between items-center' key={index}>
-                <span className='text-lg'>{transaction.category}</span>
-                <span className='text-2xl text-blue-600'>
-                  ₹{transaction.amount}
-                </span>
-              </li>
-            ))}
+          {userData.expenses &&
+            [...userData.expenses]
+              .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort expenses by date in descending order
+              .map((expense, index) => (
+                <li
+                  className='flex justify-between items-center bg-gray-100 rounded-lg p-3'
+                  key={expense.expenseId}
+                >
+                  <div>
+                    <span className='text-lg font-medium text-gray-800'>
+                      {expense.description}{' '}
+                      <span className='text-xs'>
+                        {'('}
+                        {new Date(expense.date).toLocaleDateString('en-IN')}
+                        {')'}
+                      </span>
+                    </span>
+                  </div>
+                  <span className='text-2xl text-blue-600'>
+                    ₹{expense.amount}
+                  </span>
+                </li>
+              ))}
         </ul>
       </div>
 

@@ -57,7 +57,6 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
         {/* Logo */}
         <div className='text-white text-4xl font-extrabold font-sans tracking-wider hover:scale-105 transition-all duration-300'>
           <Link to='/home'>
-            {' '}
             <img className='inline w-20 my-auto' src='/logo.png' alt='' />{' '}
             Pocket
           </Link>
@@ -110,14 +109,42 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
       {/* Mobile Dropdown Menu */}
       {isMenuOpen && (
         <div className='md:hidden bg-gray-800 text-white py-6 space-y-6'>
-          {renderLinks().map((link, index) => (
-            <div
-              key={index}
-              className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
-            >
-              {link}
-            </div>
-          ))}
+          {isLoggedIn ? (
+            <>
+              {['Dashboard', 'Add Expense', 'Track Expense', 'Profile'].map(
+                (text, index) => (
+                  <Link
+                    key={index}
+                    to={`/${text.toLowerCase().replace(' ', '-')}`}
+                    className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
+                  >
+                    {text}
+                  </Link>
+                )
+              )}
+              <button
+                onClick={handleLogout}
+                className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to='/login'
+                className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
+              >
+                Login
+              </Link>
+              <Link
+                to='/register'
+                className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
+              >
+                Register
+              </Link>
+            </>
+          )}
         </div>
       )}
     </nav>

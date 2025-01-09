@@ -5,7 +5,6 @@ import com.pocket.pocket.repository.BudgetRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -22,5 +21,9 @@ public class BudgetService {
         Date date = new Date();
         budget.setDate(date);
         return budgetRepo.save(budget);
+    }
+
+    public void updateBudget(Budget budget) {
+        budgetRepo.save(budget);
     }
 }
