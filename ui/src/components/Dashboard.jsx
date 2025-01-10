@@ -103,7 +103,7 @@ const Dashboard = () => {
               .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort expenses by date in descending order
               .map((expense, index) => (
                 <li
-                  className='flex justify-between items-center bg-gray-100 rounded-lg p-3'
+                  className='flex justify-between items-center bg-gray-100 rounded-lg p-3 transition-transform transform hover:scale-105 hover:shadow-md'
                   key={expense.expenseId}
                 >
                   <div>
@@ -153,26 +153,34 @@ const Dashboard = () => {
         <h6 className='text-2xl font-semibold text-gray-800 mb-4'>
           Savings Tracker
         </h6>
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-          {/* Corrected: Assuming only one vacation goal */}
-          {budget.savings && (
-            <div className='flex justify-between items-center'>
-              <span className='text-gray-600 text-lg'>Vacation Goal</span>
+        {userData.goals && userData.goals.length > 0 ? (
+          userData.goals.map((goal, index) => (
+            <div
+              key={goal.id || index}
+              className='flex justify-between items-center mb-4 p-4 bg-gray-100 rounded-lg transition-transform transform hover:scale-105 hover:shadow-lg'
+            >
+              <span className='text-gray-600 text-lg'>{goal.description}</span>
               <div className='flex flex-col items-center'>
-                <p className='text-2xl text-blue-600'>
-                  ₹{budget.savings.saved}
-                </p>
-                <span className='text-sm text-gray-600'>Saved</span>
+                <p className='text-2xl text-blue-600'>₹{goal.amount}</p>
+                <span className='text-sm text-gray-600'>Amount</span>
               </div>
               <div className='flex flex-col items-center'>
-                <p className='text-2xl text-green-600'>
-                  ₹{budget.savings.goal}
+                <p
+                  className={`text-2xl ${
+                    goal.status === 'Incomplete'
+                      ? 'text-red-600'
+                      : 'text-green-600'
+                  }`}
+                >
+                  {goal.status}
                 </p>
-                <span className='text-sm text-gray-600'>Goal</span>
+                <span className='text-sm text-gray-600'>Status</span>
               </div>
             </div>
-          )}
-        </div>
+          ))
+        ) : (
+          <p className='text-gray-600 text-center'>No goals available.</p>
+        )}
       </div>
     </div>
   )

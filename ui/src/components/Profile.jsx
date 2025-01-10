@@ -12,6 +12,13 @@ const Profile = () => {
   })
   const [newData, setNewData] = useState({ ...userData })
   const [showModal, setShowModal] = useState(false)
+  const [goalData, setGoalData] = useState({
+    userId: localStorage.getItem('userId'),
+    description: '',
+    amount: '',
+    status: 'Incomplete'
+  })
+  const [editGoalData, setEditGoalData] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,12 +71,6 @@ const Profile = () => {
   }
 
   const handleCloseModal = () => setShowModal(false)
-  const [goalData, setGoalData] = useState({
-    userId: localStorage.getItem('userId'),
-    description: '',
-    amount: '',
-    status: 'Incomplete'
-  })
 
   const handleGoalModalChange = e => {
     const { name, value } = e.target
@@ -77,17 +78,52 @@ const Profile = () => {
   }
 
   const handleSaveGoal = async () => {
-    const res = await axios.post('http://localhost:8080/goal', goalData)
-    console.log(goalData)
-
-    if (res) {
-      setGoalData({ name: '', target: '' })
-      setShowModal(false)
-      window.location.href = '/profile'
+    try {
+      const res = await axios.post('http://localhost:8080/goal', goalData)
+      if (res) {
+        setGoalData({ description: '', amount: '', status: 'Incomplete' })
+        setShowModal(false)
+        window.location.href = '/profile'
+      }
+    } catch (err) {
+      alert('Error saving goal')
     }
   }
 
-  // console.log(userData)
+  const handleEditGoal = goalId => {
+    const goalToEdit = userData.goals.find(goal => goal.id === goalId)
+    setEditGoalData(goalToEdit)
+    setShowModal(true)
+  }
+
+  const handleUpdateGoal = async () => {
+    try {
+      const updatedGoal = { ...editGoalData }
+      await axios.put(
+        `http://localhost:8080/goal/${updatedGoal.id}`,
+        updatedGoal
+      )
+      setUserData(prevData => ({
+        ...prevData,
+        goals: prevData.goals.map(goal =>
+          goal.id === updatedGoal.id ? updatedGoal : goal
+        )
+      }))
+      setShowModal(false)
+    } catch (err) {
+      alert('Error updating goal')
+    }
+  }
+
+  const handleDeleteGoal = goalId => {
+    try {
+      axios.delete(`http://localhost:8080/goal/${goalId}`)
+      const updatedGoals = userData.goals.filter(goal => goal.id !== goalId)
+      setUserData(prevData => ({ ...prevData, goals: updatedGoals }))
+    } catch (err) {
+      alert('Error deleting goal')
+    }
+  }
 
   return (
     <div className='p-6 rounded-lg mx-auto'>
@@ -220,8 +256,24 @@ const Profile = () => {
         </h3>
         {userData.goals.map((goal, index) => (
           <div key={goal.id} className='flex justify-between items-center mb-4'>
-            <span className='text-gray-600'>{goal.description}</span>
-            <p className='text-lg text-blue-600'>{`₹${goal.amount}`}</p>
+            <div className='flex flex-col'>
+              <span className='text-gray-600'>{goal.description}</span>
+              <p className='text-lg text-blue-600'>{`₹${goal.amount}`}</p>
+            </div>
+            <div className='flex space-x-2'>
+              <button
+                onClick={() => handleEditGoal(goal.id)}
+                className='px-2 py-1 text-sm text-white bg-yellow-500 rounded-lg hover:bg-yellow-600'
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteGoal(goal.id)}
+                className='px-2 py-1 text-sm text-white bg-red-500 rounded-lg hover:bg-red-600'
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
         <button
@@ -232,81 +284,52 @@ const Profile = () => {
         </button>
       </div>
 
-      {/* Change Password */}
-      <div className='mt-10'>
-        <h3 className='text-2xl font-semibold text-gray-800 mb-4'>
-          Change Password
-        </h3>
-        <input
-          type='password'
-          className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
-          placeholder='Enter new password'
-        />
-        <input
-          type='password'
-          className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
-          placeholder='Confirm new password'
-        />
-        <button className='px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600'>
-          Change Password
-        </button>
-      </div>
-
       {/* Modal */}
       {showModal && (
         <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
           <div className='bg-white p-6 rounded-lg w-96'>
             <h2 className='text-2xl font-semibold text-gray-800 mb-4'>
-              Add Goal
+              {editGoalData ? 'Edit Goal' : 'Add Goal'}
             </h2>
             <div>
               <input
                 type='text'
                 name='userId'
-                value={userData.userId}
+                value={goalData.userId}
                 onChange={handleGoalModalChange}
                 className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
-                placeholder='Goal Name'
                 hidden
               />
               <input
                 type='text'
                 name='description'
-                value={goalData.description}
+                value={
+                  editGoalData ? editGoalData.description : goalData.description
+                }
                 onChange={handleGoalModalChange}
                 className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
-                placeholder='Goal Name'
+                placeholder='Goal Description'
               />
               <input
                 type='number'
                 name='amount'
-                value={goalData.amount}
+                value={editGoalData ? editGoalData.amount : goalData.amount}
                 onChange={handleGoalModalChange}
                 className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
-                placeholder='Target Amount'
+                placeholder='Goal Amount'
               />
-              <input
-                type='text'
-                name='status'
-                value={goalData.status}
-                onChange={handleGoalModalChange}
-                className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
-                placeholder='Incomplete'
-                hidden
-              />
-              <div className='flex justify-end space-x-4'>
-                <button
-                  onClick={handleCloseModal}
-                  className='px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400'
-                >
-                  Cancel
-                </button>
+              <div className='flex space-x-4'>
                 <button
                   onClick={handleSaveGoal}
-                  type='submit'
-                  className='px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600'
+                  className='px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600'
                 >
                   Save
+                </button>
+                <button
+                  onClick={handleCloseModal}
+                  className='px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400'
+                >
+                  Close
                 </button>
               </div>
             </div>

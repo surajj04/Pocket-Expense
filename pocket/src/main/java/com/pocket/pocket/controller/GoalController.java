@@ -15,7 +15,6 @@ public class GoalController {
 
     @PostMapping("/goal")
     public Goals addGoals(@RequestBody Goals goals) {
-        System.out.println(goals);
         return goalsService.addGoal(goals);
     }
 }
