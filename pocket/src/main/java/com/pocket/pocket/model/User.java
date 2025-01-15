@@ -1,6 +1,11 @@
 package com.pocket.pocket.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.Date;
 
 @Entity
 public class User {
@@ -9,6 +14,8 @@ public class User {
     private int userId;
     private String name;
     private String email;
+    private String gender;
+    private Date dob;
     private String password;
     @Column(unique = true)
     private String token;
@@ -37,6 +44,22 @@ public class User {
         this.email = email;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -59,7 +82,10 @@ public class User {
                 "userId=" + userId +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", gender='" + gender + '\'' +
+                ", dob=" + dob +
                 ", password='" + password + '\'' +
+                ", token='" + token + '\'' +
                 '}';
     }
 }

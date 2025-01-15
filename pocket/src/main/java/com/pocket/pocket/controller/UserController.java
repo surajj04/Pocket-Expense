@@ -1,10 +1,13 @@
 package com.pocket.pocket.controller;
 
 import com.pocket.pocket.model.Login;
+import com.pocket.pocket.model.UpdateUser;
 import com.pocket.pocket.model.User;
 import com.pocket.pocket.model.UserDetail;
 import com.pocket.pocket.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,9 +31,15 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public boolean loginUser(@RequestBody Login user) {
-        return service.validatePassword(user.getEmail(), user.getPassword());
+    public ResponseEntity<String> loginUser(@RequestBody Login user) {
+        boolean isValid = service.validatePassword(user.getEmail(), user.getPassword());
+        if (isValid) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
     }
+
 
     @PostMapping("/token")
     public String getToken(@RequestBody Login user) {
@@ -50,5 +59,24 @@ public class UserController {
     @GetMapping("/userDetail/{token}")
     public UserDetail getUserDetail(@PathVariable String token) {
         return service.getUserDetail(token);
+    }
+
+    @PutMapping("/updateEmail")
+    public UpdateUser updateUserEmail(@RequestBody UpdateUser user) {
+        return service.updateEmail(user);
+    }
+    @PutMapping("/updateName")
+    public UpdateUser updateUserName(@RequestBody UpdateUser user) {
+        return service.updateName(user);
+    }
+
+    @PutMapping("/updatePassword")
+    public UpdateUser updateUserPassword(@RequestBody UpdateUser user) {
+        return service.updatePassword(user);
+    }
+
+    @DeleteMapping("/delete/{token}")
+    public void deleteUser(@PathVariable String token) {
+        service.deleteUser(token);
     }
 }

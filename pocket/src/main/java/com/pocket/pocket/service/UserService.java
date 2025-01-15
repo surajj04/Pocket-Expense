@@ -1,5 +1,6 @@
 package com.pocket.pocket.service;
 
+import com.pocket.pocket.model.UpdateUser;
 import com.pocket.pocket.model.User;
 import com.pocket.pocket.model.UserDetail;
 import com.pocket.pocket.repository.BudgetRepo;
@@ -106,5 +107,49 @@ public class UserService {
         user.setGoals(goalsRepo.findByUserId(user.getUserId()));
 
         return user;
+    }
+
+    public UpdateUser updateEmail(UpdateUser user) {
+        User user1 = userRepo.findById(user.getUserId()).orElse(new User());
+        user1.setEmail(user.getEmail());
+        User result = userRepo.save(user1);
+        if (result.getUserId() != 0) {
+            return user;
+        }
+        return null;
+    }
+
+    public UpdateUser updateName(UpdateUser user) {
+        User user1 = userRepo.findById(user.getUserId()).orElse(new User());
+        user1.setName(user.getName());
+        User result = userRepo.save(user1);
+        if (result.getUserId() != 0) {
+            return user;
+        }
+        return null;
+    }
+
+    public UpdateUser updatePassword(UpdateUser user) {
+        User user1 = userRepo.findById(user.getUserId()).orElse(new User());
+
+        boolean oldPass = encoder.matches(user.getOldPassword(), user1.getPassword());
+        if (oldPass) {
+            String newPassword = encoder.encode(user.getNewPassword());
+            user1.setPassword(newPassword);
+            User result = userRepo.save(user1);
+            if (result.getUserId() != 0) {
+                return user;
+            }
+            return null;
+        }
+        return null;
+    }
+
+    public void deleteUser(String token) {
+        int userId = userRepo.findByToken(token).getUserId();
+        budgetRepo.deleteBudgetByUserId(userId);
+        expenseRepo.deleteByUserId(userId);
+        goalsRepo.deleteByUserId(userId);
+        userRepo.deleteUserByToken(token);
     }
 }

@@ -23,10 +23,45 @@ public class ExpenseService {
     }
 
     public Expense addExpense(Expense expense) {
-        List<Budget> budgets = budgetService.getBudgetByUserId(expense.getUserId());
-        Budget budget = budgets.getLast();
-        budget.setCurrentBalance(budget.getCurrentBalance() - expense.getAmount());
-        budgetService.updateBudget(budget);
+        System.out.println(expense);
+        manageBudget(expense);
         return expenseRepo.save(expense);
     }
+
+    public void manageBudget(Expense expense) {
+        List<Budget> budgets = budgetService.getBudgetByUserId(expense.getUserId());
+
+        if (budgets == null || budgets.isEmpty()) {
+            System.err.println("No budgets found for user ID: " + expense.getUserId());
+            return;
+        }
+
+        Budget budget = budgets.get(budgets.size() - 1);
+
+        String category = expense.getCategory();
+        if (category == null) {
+            System.err.println("Expense category is null.");
+            return;
+        }
+
+        double amount = expense.getAmount();
+
+        switch (category) {
+            case "Food":
+                budget.setFood(budget.getFood() - amount);
+                break;
+            case "Bills":
+                budget.setBills(budget.getBills() - amount);
+                break;
+            case "Travel":
+                budget.setTravel(budget.getTravel() - amount);
+                break;
+            default:
+                budget.setCurrentBalance(budget.getCurrentBalance() - amount);
+                break;
+        }
+
+        budgetService.updateBudget(budget);
+    }
+
 }

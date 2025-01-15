@@ -21,4 +21,12 @@ public class GoalsService {
         return goalsRepo.save(goal);
     }
 
+    public Goals updateGoal(Goals goal) {
+        return goalsRepo.save(goal);
+    }
+
+    public void deleteGoal(int id) {
+        goalsRepo.deleteById(id);
+    }
+
 }

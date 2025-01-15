@@ -1,6 +1,7 @@
 package com.pocket.pocket.repository;
 
 import com.pocket.pocket.model.User;
+import com.pocket.pocket.model.UserDetail;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,4 +22,10 @@ public interface UserRepo extends JpaRepository<User, Integer> {
     void clearToken(String token);
 
     User findByToken(String token);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM User u WHERE u.token = :token")
+    void deleteUserByToken(@Param("token") String token);
+
 }
