@@ -22,37 +22,41 @@ const UserLogin = () => {
   const handleSubmit = async e => {
     e.preventDefault()
 
-    console.log(typeof formData.email)
-
     if (!formData.email || !formData.password) {
       setError('Please enter both email and password')
       return
-    } else {
-      try {
-        console.log('before login vaildate')
+    }
 
-        const res = await axios.post('http://localhost:8080/login', {
+    try {
+      const res = await axios.post('http://localhost:8080/login', {
+        email: formData.email,
+        password: formData.password
+      })
+
+      // If login is successful
+      if (res.status === 200) {
+        const tokenRes = await axios.post('http://localhost:8080/token', {
           email: formData.email,
           password: formData.password
         })
 
-        if (res) {
-          const token = await axios.post('http://localhost:8080/token', {
-            email: formData.email,
-            password: formData.password
-          })
-
-          if (token !== null) {
-            localStorage.setItem('userToken', token.data)
-          }
+        if (tokenRes.status === 200 && tokenRes.data) {
+          // Save token in local storage
+          localStorage.setItem('userToken', tokenRes.data)
           alert('Login Successful!')
           window.location.href = '/home'
         }
-      } catch (err) {
-        window.alert(err)
+      }
+    } catch (err) {
+      // Handle errors from the backend
+      if (err.response && err.response.status === 401) {
+        setError('Invalid email or password') // Show error to the user
+      } else {
+        setError('An error occurred. Please try again.')
       }
     }
-    setError('')
+
+    // Reset form state
     setFormData({
       email: '',
       password: ''

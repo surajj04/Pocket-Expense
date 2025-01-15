@@ -13,6 +13,7 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
       return (
         <>
           {['Dashboard', 'Add Expense', 'Track Expense', 'Profile'].map(
+            // Removed 'Reports' from this array
             (text, index) => (
               <Link
                 key={index}
@@ -23,6 +24,13 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
               </Link>
             )
           )}
+          {/* Added Reports link separately */}
+          <Link
+            to='/report'
+            className='text-white hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
+          >
+            Reports
+          </Link>
           <button
             onClick={handleLogout}
             className='text-white hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
@@ -112,6 +120,7 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
           {isLoggedIn ? (
             <>
               {['Dashboard', 'Add Expense', 'Track Expense', 'Profile'].map(
+                // Removed 'Reports' from this array
                 (text, index) => (
                   <Link
                     key={index}
@@ -122,6 +131,13 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
                   </Link>
                 )
               )}
+              {/* Added Reports link separately */}
+              <Link
+                to='/report'
+                className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
+              >
+                Reports
+              </Link>
               <button
                 onClick={handleLogout}
                 className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'

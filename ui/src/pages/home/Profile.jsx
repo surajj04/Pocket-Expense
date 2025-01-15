@@ -1,17 +1,20 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [userData, setUserData] = useState({
     name: '',
     email: '',
+    password: '',
     budgets: [],
     expenses: [],
     goals: []
   })
   const [newData, setNewData] = useState({ ...userData })
   const [showModal, setShowModal] = useState(false)
+  const [showProfileModal, setShowProfileModal] = useState(false) // For Profile Update Modal
   const [goalData, setGoalData] = useState({
     userId: localStorage.getItem('userId'),
     description: '',
@@ -72,6 +75,8 @@ const Profile = () => {
 
   const handleCloseModal = () => setShowModal(false)
 
+  const handleProfileModalClose = () => setShowProfileModal(false) // Close Profile Modal
+
   const handleGoalModalChange = e => {
     const { name, value } = e.target
     setGoalData(prevState => ({ ...prevState, [name]: value }))
@@ -83,7 +88,9 @@ const Profile = () => {
       if (res) {
         setGoalData({ description: '', amount: '', status: 'Incomplete' })
         setShowModal(false)
-        window.location.href = '/profile'
+        const updatedUserData = { ...userData }
+        updatedUserData.goals.push(res.data) // Assuming response contains the newly created goal
+        setUserData(updatedUserData)
       }
     } catch (err) {
       alert('Error saving goal')
@@ -93,16 +100,14 @@ const Profile = () => {
   const handleEditGoal = goalId => {
     const goalToEdit = userData.goals.find(goal => goal.id === goalId)
     setEditGoalData(goalToEdit)
+    setGoalData({ ...goalToEdit }) // Populate the goalData with the goal data
     setShowModal(true)
   }
 
   const handleUpdateGoal = async () => {
     try {
-      const updatedGoal = { ...editGoalData }
-      await axios.put(
-        `http://localhost:8080/goal/${updatedGoal.id}`,
-        updatedGoal
-      )
+      const updatedGoal = { ...goalData }
+      const res = await axios.put(`http://localhost:8080/goal`, updatedGoal)
       setUserData(prevData => ({
         ...prevData,
         goals: prevData.goals.map(goal =>
@@ -115,15 +120,36 @@ const Profile = () => {
     }
   }
 
-  const handleDeleteGoal = goalId => {
-    try {
-      axios.delete(`http://localhost:8080/goal/${goalId}`)
-      const updatedGoals = userData.goals.filter(goal => goal.id !== goalId)
-      setUserData(prevData => ({ ...prevData, goals: updatedGoals }))
-    } catch (err) {
-      alert('Error deleting goal')
+  const handleDeleteGoal = async goalId => {
+    const confirmLogout = window.confirm('Do you want to delete this goal?')
+    if (confirmLogout) {
+      try {
+        await axios.delete(`http://localhost:8080/goal/${goalId}`)
+        const updatedGoals = userData.goals.filter(goal => goal.id !== goalId)
+        setUserData(prevData => ({ ...prevData, goals: updatedGoals }))
+      } catch (err) {
+        alert('Error deleting goal')
+      }
     }
   }
+
+  const handleGoalCompletion = e => {
+    const { checked } = e.target
+    if (editGoalData) {
+      setGoalData(prev => ({
+        ...prev,
+        status: checked ? 'Complete' : 'Incomplete'
+      }))
+    } else {
+      setGoalData(prev => ({
+        ...prev,
+        status: checked ? 'Complete' : 'Incomplete'
+      }))
+    }
+  }
+
+  // Open Profile Update Modal
+  const handleProfileEdit = () => setShowProfileModal(true)
 
   return (
     <div className='p-6 rounded-lg mx-auto'>
@@ -136,6 +162,7 @@ const Profile = () => {
             className='w-24 h-24 rounded-full object-cover'
           />
         </div>
+
         <div className='flex-1'>
           {isEditing ? (
             <>
@@ -152,6 +179,14 @@ const Profile = () => {
                 type='email'
                 name='email'
                 value={newData.email}
+                onChange={handleInputChange}
+                className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
+              />
+              <label className='block text-gray-700 mb-2'>Password</label>
+              <input
+                type='password'
+                name='password'
+                value={newData.password}
                 onChange={handleInputChange}
                 className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
               />
@@ -181,18 +216,18 @@ const Profile = () => {
                 </button>
               </>
             ) : (
-              <button
-                onClick={handleEdit}
-                className='px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600'
+              <Link
+                to={'/settings'}
+                className='px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600'
               >
-                Edit Profile
-              </button>
+                Settings
+              </Link>
             )}
           </div>
         </div>
       </div>
 
-      {/* Monthly Budgets */}
+      {/* Budgets */}
       <div className='mt-10'>
         <h3 className='text-2xl font-semibold text-gray-800 mb-4'>
           Monthly Budgets
@@ -208,38 +243,11 @@ const Profile = () => {
                   })}{' '}
                   {new Date(budget.date).getFullYear()}
                 </h4>
-                {isEditing ? (
-                  <input
-                    type='number'
-                    name={`monthlyBudget-${index}`}
-                    value={newData.budgets[index]?.monthlyBudget || ''}
-                    onChange={e => handleInputChange(e, index)}
-                    className='w-32 px-4 py-2 rounded-lg border border-gray-300'
-                  />
-                ) : (
-                  <p className='text-lg text-blue-600'>
-                    ₹{budget.monthlyBudget}
-                  </p>
-                )}
+                <p className='text-lg text-blue-600'>₹{budget.monthlyBudget}</p>
               </div>
               <div className='mt-4'>
                 <p>
                   <strong>Current Balance:</strong> ₹{budget.currentBalance}
-                </p>
-                <p>
-                  <strong>Bills:</strong> ₹{budget.bills}
-                </p>
-                <p>
-                  <strong>Food:</strong> ₹{budget.food}
-                </p>
-                <p>
-                  <strong>Entertainment:</strong> ₹{budget.entertainment}
-                </p>
-                <p>
-                  <strong>Travel:</strong> ₹{budget.travel}
-                </p>
-                <p>
-                  <strong>Other:</strong> ₹{budget.other}
                 </p>
               </div>
             </div>
@@ -249,12 +257,12 @@ const Profile = () => {
         )}
       </div>
 
-      {/* Savings Tracker */}
+      {/* Goals */}
       <div className='mt-10'>
         <h3 className='text-2xl font-semibold text-gray-800 mb-4'>
           Savings Tracker
         </h3>
-        {userData.goals.map((goal, index) => (
+        {userData.goals.map(goal => (
           <div key={goal.id} className='flex justify-between items-center mb-4'>
             <div className='flex flex-col'>
               <span className='text-gray-600'>{goal.description}</span>
@@ -284,54 +292,61 @@ const Profile = () => {
         </button>
       </div>
 
-      {/* Modal */}
+      {/* Modal for Profile Edit */}
       {showModal && (
         <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='bg-white p-6 rounded-lg w-96'>
-            <h2 className='text-2xl font-semibold text-gray-800 mb-4'>
+          <div className='bg-white p-8 rounded-lg'>
+            <h3 className='text-xl font-semibold mb-4'>
               {editGoalData ? 'Edit Goal' : 'Add Goal'}
-            </h2>
-            <div>
+            </h3>
+            <input
+              type='text'
+              name='description'
+              value={goalData.description}
+              onChange={handleGoalModalChange}
+              placeholder='Goal Description'
+              className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
+            />
+            <input
+              type='number'
+              name='amount'
+              value={goalData.amount}
+              onChange={handleGoalModalChange}
+              placeholder='Goal Amount'
+              className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
+            />
+            <div className='flex items-center'>
               <input
-                type='text'
-                name='userId'
-                value={goalData.userId}
-                onChange={handleGoalModalChange}
-                className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
-                hidden
+                type='checkbox'
+                name='status'
+                checked={goalData.status === 'Complete'}
+                onChange={handleGoalCompletion}
+                className='mr-2'
               />
-              <input
-                type='text'
-                name='description'
-                value={
-                  editGoalData ? editGoalData.description : goalData.description
-                }
-                onChange={handleGoalModalChange}
-                className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
-                placeholder='Goal Description'
-              />
-              <input
-                type='number'
-                name='amount'
-                value={editGoalData ? editGoalData.amount : goalData.amount}
-                onChange={handleGoalModalChange}
-                className='w-full px-4 py-2 rounded-lg border border-gray-300 mb-4'
-                placeholder='Goal Amount'
-              />
-              <div className='flex space-x-4'>
+              <label>Mark as Completed</label>
+            </div>
+            <div className='mt-4'>
+              {editGoalData ? (
+                <button
+                  onClick={handleUpdateGoal}
+                  className='px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600'
+                >
+                  Update Goal
+                </button>
+              ) : (
                 <button
                   onClick={handleSaveGoal}
                   className='px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600'
                 >
-                  Save
+                  Save Goal
                 </button>
-                <button
-                  onClick={handleCloseModal}
-                  className='px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400'
-                >
-                  Close
-                </button>
-              </div>
+              )}
+              <button
+                onClick={handleCloseModal}
+                className='px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 ml-4'
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>

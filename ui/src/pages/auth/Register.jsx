@@ -1,12 +1,17 @@
 import axios from 'axios'
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const UserRegister = () => {
+  const navigate = useNavigate()
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    gender: '',
+    dob: ''
   })
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -24,7 +29,9 @@ const UserRegister = () => {
       !formData.name ||
       !formData.email ||
       !formData.password ||
-      !formData.confirmPassword
+      !formData.confirmPassword ||
+      !formData.gender ||
+      !formData.dob
     ) {
       setError('All fields are required')
       return false
@@ -39,6 +46,14 @@ const UserRegister = () => {
     }
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
+      return false
+    }
+    if (!['male', 'female', 'other'].includes(formData.gender.toLowerCase())) {
+      setError('Invalid gender selected')
+      return false
+    }
+    if (new Date(formData.dob) > new Date()) {
+      setError('Date of birth cannot be in the future')
       return false
     }
     return true
@@ -56,18 +71,18 @@ const UserRegister = () => {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        gender: formData.gender,
+        dob: formData.dob,
         token: ''
       })
 
       if (res.status === 200) {
-        alert('User Registered Successfully!')
-
         const loginRes = await axios.post('http://localhost:8080/login', {
           email: formData.email,
           password: formData.password
         })
 
-        if (loginRes) {
+        if (loginRes.status === 200) {
           const token = await axios.post('http://localhost:8080/token', {
             email: formData.email,
             password: formData.password
@@ -75,15 +90,13 @@ const UserRegister = () => {
 
           localStorage.setItem('userToken', token.data)
           localStorage.setItem('isLoggedIn', 'true')
-          window.location.href = '/setup'
-        }
 
-        setFormData({
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: ''
-        })
+          alert('User Registered Successfully!')
+
+          // Navigate to setup page instead of redirecting
+          window.location.href = '/setup'
+          return
+        }
       }
     } catch (err) {
       if (err.response) {
@@ -99,12 +112,13 @@ const UserRegister = () => {
   }
 
   return (
-    <div className='flex justify-center items-center my-10'>
+    <div className='flex justify-center items-center'>
       <div className='bg-white p-8 rounded-lg shadow-md w-full max-w-md'>
         <h2 className='text-3xl font-semibold text-center text-gray-800 mb-6'>
           Register
         </h2>
         <form onSubmit={handleSubmit} className='space-y-4'>
+          {/* Form Fields */}
           <div>
             <label className='block text-gray-700 mb-2'>Full Name</label>
             <input
@@ -151,6 +165,32 @@ const UserRegister = () => {
               required
               className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400'
               placeholder='Confirm your password'
+            />
+          </div>
+          <div>
+            <label className='block text-gray-700 mb-2'>Gender</label>
+            <select
+              name='gender'
+              value={formData.gender}
+              onChange={handleChange}
+              required
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400'
+            >
+              <option value=''>Select Gender</option>
+              <option value='Male'>Male</option>
+              <option value='Female'>Female</option>
+              <option value='Other'>Other</option>
+            </select>
+          </div>
+          <div>
+            <label className='block text-gray-700 mb-2'>Date of Birth</label>
+            <input
+              type='date'
+              name='dob'
+              value={formData.dob}
+              onChange={handleChange}
+              required
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400'
             />
           </div>
           {error && <p className='text-red-500 text-sm'>{error}</p>}

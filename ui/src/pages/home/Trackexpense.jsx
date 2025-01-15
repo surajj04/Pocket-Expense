@@ -1,4 +1,3 @@
-// src/pages/TrackExpense.js
 import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 
@@ -9,7 +8,8 @@ const TrackExpense = () => {
   const [filters, setFilters] = useState({
     category: '',
     startDate: '',
-    endDate: ''
+    endDate: '',
+    description: '' // Add description to filters
   })
   const [sortOrder, setSortOrder] = useState('date')
 
@@ -33,6 +33,15 @@ const TrackExpense = () => {
       filteredExpenses = filteredExpenses.filter(
         expense =>
           expense.category.toLowerCase() === filters.category.toLowerCase()
+      )
+    }
+
+    // Filter by description
+    if (filters.description) {
+      filteredExpenses = filteredExpenses.filter(expense =>
+        expense.description
+          .toLowerCase()
+          .includes(filters.description.toLowerCase())
       )
     }
 
@@ -63,8 +72,6 @@ const TrackExpense = () => {
 
   const filteredExpenses = applyFilters()
 
-  // ************************************* //
-
   const [userData, setUserData] = useState(null)
 
   useEffect(() => {
@@ -83,8 +90,6 @@ const TrackExpense = () => {
 
     if (user) {
       fetchUserData()
-    } else {
-      setLoading(false)
     }
   }, [user])
 
@@ -108,8 +113,6 @@ const TrackExpense = () => {
       fetchData()
     }
   }, [userData])
-
-  //  ************userdetail*************
 
   const dateFormat = strdate => {
     const dateStr = strdate
@@ -163,6 +166,17 @@ const TrackExpense = () => {
             className='w-full px-4 py-2 rounded-lg border border-gray-300'
           />
         </div>
+        <div className='col-span-1 sm:col-span-2 lg:col-span-3'>
+          <label className='block text-gray-700'>Search by name</label>
+          <input
+            type='text'
+            name='description'
+            value={filters.description}
+            onChange={handleFilterChange}
+            placeholder='Search by name'
+            className='w-full px-4 py-2 rounded-lg border border-gray-300'
+          />
+        </div>
       </div>
 
       {/* Sort Section */}
@@ -186,7 +200,6 @@ const TrackExpense = () => {
             key={expense.expenseId}
             className='bg-white p-4 rounded-lg shadow-md flex justify-between items-center transition-all transform hover:bg-gray-100 hover:scale-105'
           >
-            {/* Left section with category, date, and description */}
             <div className='flex-1'>
               <h3 className='text-xl font-semibold text-gray-800'>
                 {expense.description}
@@ -196,7 +209,6 @@ const TrackExpense = () => {
                 {dateFormat(expense.date)}
               </p>
             </div>
-            {/* Right section with amount */}
             <div className='text-gray-800 font-semibold'>₹{expense.amount}</div>
           </div>
         ))}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Login from './components/Login'
-import Dashboard from './components/Dashboard'
-import AddExpense from './components/Addexpense'
+import Login from './pages/auth/Login'
+import Dashboard from './pages/home/Dashboard'
+import AddExpense from './pages/home/Addexpense'
 import Navbar from './components/Navbar'
 import {
   BrowserRouter as Router,
@@ -9,15 +9,16 @@ import {
   Routes,
   Navigate
 } from 'react-router-dom'
-import Profile from './components/Profile'
-import TrackExpense from './components/Trackexpense'
-import NewUserPage from './components/NewUser'
-import UserRegister from './components/Register'
-import Home from './components/Home'
+import Profile from './pages/home/Profile'
+import TrackExpense from './pages/home/Trackexpense'
+import UserRegister from './pages/auth/Register'
+import Home from './pages/home/Home'
 import RegistrationSuccess from './components/RegistrationSuccess'
 import axios from 'axios'
-import BudgetSetupPage from './components/BudgetSetupPage'
+import BudgetSetupPage from './pages/home/BudgetSetupPage'
 import LoadingPage from './components/Loading'
+import Settings from './pages/home/Settings'
+import ExpenseReport from './pages/report/ExpenseReport'
 
 function App () {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -58,6 +59,7 @@ function App () {
         setIsLoggedIn(false)
         localStorage.setItem('isLoggedIn', 'false')
         localStorage.removeItem('userToken')
+        localStorage.clear() // Clears all items in localStorage
         setUser(null)
       } catch (err) {
         window.alert(err)
@@ -68,7 +70,7 @@ function App () {
   if (loading) {
     return <LoadingPage />
   }
-
+  // localStorage.clear() // Clears all items in localStorage
   return (
     <div>
       <Router>
@@ -92,10 +94,6 @@ function App () {
               element={isLoggedIn ? <Profile /> : <Navigate to='/login' />}
             />
             <Route
-              path='/newuser'
-              element={isLoggedIn ? <NewUserPage /> : <Navigate to='/login' />}
-            />
-            <Route
               path='/setup'
               element={
                 isLoggedIn ? <BudgetSetupPage /> : <Navigate to='/login' />
@@ -108,6 +106,16 @@ function App () {
             <Route
               path='/'
               element={isLoggedIn ? <Dashboard /> : <Navigate to='/login' />}
+            />
+            <Route
+              path='/settings'
+              element={isLoggedIn ? <Settings /> : <Navigate to='/login' />}
+            />
+            <Route
+              path='/report'
+              element={
+                isLoggedIn ? <ExpenseReport /> : <Navigate to='/login' />
+              }
             />
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<UserRegister />} />

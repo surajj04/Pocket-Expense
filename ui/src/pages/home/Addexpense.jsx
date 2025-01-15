@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const AddExpense = () => {
   const getCurrentDate = () => {
@@ -11,22 +11,18 @@ const AddExpense = () => {
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState(getCurrentDate())
   const [description, setDescription] = useState('')
-
-  const userData = JSON.parse(localStorage.getItem('userData'))
+  const [userData, setUserData] = useState({})
 
   const handleSubmit = async e => {
     e.preventDefault()
-
     try {
       const res = await axios.post('http://localhost:8080/expense', {
         userId: userData.userId,
         amount: amount,
         category: category,
-        date: date || getCurrentDate(), // Use current date if not provided
+        date: date || getCurrentDate(),
         description: description
       })
-
-      console.log(res)
 
       if (res.status === 200 || res.status === 201) {
         alert('Expense added successfully!')
@@ -42,6 +38,24 @@ const AddExpense = () => {
       alert('An error occurred while adding the expense.')
     }
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await axios.get(
+          `http://localhost:8080/userDetail/${localStorage.getItem(
+            'userToken'
+          )}`
+        )
+        setUserData(data.data)
+        localStorage.setItem('userData', JSON.stringify(userData))
+      } catch (err) {
+        alert(err)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   return (
     <div className='py-4 px-6'>
