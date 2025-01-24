@@ -19,6 +19,7 @@ import BudgetSetupPage from './pages/home/BudgetSetupPage'
 import LoadingPage from './components/Loading'
 import Settings from './pages/home/Settings'
 import ExpenseReport from './pages/report/ExpenseReport'
+import AdminDashboard from './assets/admin/AdminDashboard'
 
 function App () {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -26,6 +27,8 @@ function App () {
   )
   const [user, setUser] = useState(localStorage.getItem('userToken'))
   const [loading, setLoading] = useState(false)
+
+  const [admin, setAdmin] = useState(false)
 
   useEffect(() => {
     const checkToken = async () => {
@@ -74,9 +77,15 @@ function App () {
   return (
     <div>
       <Router>
-        <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+        {!admin && (
+          <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+        )}
         <div className='container mx-auto p-6'>
           <Routes>
+            <Route
+              path='/admin'
+              element={<AdminDashboard setAdmin={setAdmin} />}
+            />
             <Route
               path='/dashboard'
               element={isLoggedIn ? <Dashboard /> : <Navigate to='/login' />}

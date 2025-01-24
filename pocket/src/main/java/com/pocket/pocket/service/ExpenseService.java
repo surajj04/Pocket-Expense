@@ -17,6 +17,9 @@ public class ExpenseService {
     @Autowired
     private BudgetService budgetService;
 
+    public List<Expense> getAllExpense() {
+        return expenseRepo.findAll();
+    }
 
     public List<Expense> getExpenseByUserId(int userId) {
         return expenseRepo.findByUserId(userId);

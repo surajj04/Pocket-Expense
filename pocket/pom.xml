@@ -57,9 +57,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-
-	</dependencies>
+		<dependency>
+    	<groupId>com.opencsv</groupId>
+    	<artifactId>opencsv</artifactId>
+    	<version>5.7.1</version>
+		</dependency>
+ </dependencies>
 
 	<build>
 		<plugins>

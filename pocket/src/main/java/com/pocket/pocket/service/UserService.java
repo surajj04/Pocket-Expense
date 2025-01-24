@@ -152,4 +152,15 @@ public class UserService {
         goalsRepo.deleteByUserId(userId);
         userRepo.deleteUserByToken(token);
     }
+
+    public User getUserDetail(int userId) {
+        User user = new User();
+        User temp = userRepo.findById(userId).orElse(new User());
+
+        user.setGender(temp.getGender());
+        user.setName(temp.getName());
+        user.setDob(temp.getDob());
+
+        return user;
+    }
 }

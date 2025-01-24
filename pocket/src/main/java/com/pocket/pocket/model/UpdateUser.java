@@ -1,11 +1,6 @@
 package com.pocket.pocket.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import java.util.Date;
-
 
 public class UpdateUser {
     private int userId;
