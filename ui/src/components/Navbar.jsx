@@ -1,169 +1,81 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { LogOut } from 'lucide-react'
+import React from 'react'
+import { useDispatch } from 'react-redux'
+import { Link, useLocation } from 'react-router-dom'
+import { logout } from '../store/userSlice'
 
-const Navbar = ({ isLoggedIn, handleLogout }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+function Navbar ({ navItems }) {
+  const pathname = useLocation().pathname
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+  const dispatch = useDispatch()
 
-  const renderLinks = () => {
-    if (isLoggedIn) {
-      return (
-        <>
-          {['Dashboard', 'Add Expense', 'Track Expense', 'Profile'].map(
-            // Removed 'Reports' from this array
-            (text, index) => (
-              <Link
-                key={index}
-                to={`/${text.toLowerCase().replace(' ', '-')}`}
-                className='text-white hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
-              >
-                {text}
-              </Link>
-            )
-          )}
-          {/* Added Reports link separately */}
-          <Link
-            to='/report'
-            className='text-white hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
-          >
-            Reports
-          </Link>
-          <button
-            onClick={handleLogout}
-            className='text-white hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
-          >
-            Logout
-          </button>
-        </>
-      )
-    } else {
-      return (
-        <>
-          <Link
-            to='/login'
-            className='text-white hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
-          >
-            Login
-          </Link>
-          <Link
-            to='/register'
-            className='text-white hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
-          >
-            Register
-          </Link>
-        </>
-      )
+  const handleLogout = () => {
+    const result = window.confirm('Are you sure you want to log out?')
+    if (result) {
+      dispatch(logout())
     }
   }
 
   return (
-    <nav className='bg-gray-800 sticky top-0 z-50'>
-      <div className='max-w-screen-xl mx-auto px-6 py-4 flex justify-between items-center'>
-        {/* Logo */}
-        <div className='text-white text-4xl font-extrabold font-sans tracking-wider hover:scale-105 transition-all duration-300'>
-          <Link to='/home'>
-            <img className='inline w-20 my-auto' src='/logo.png' alt='' />{' '}
-            Pocket
-          </Link>
-        </div>
-
-        {/* Desktop Navbar */}
-        <div className='hidden md:flex space-x-8'>{renderLinks()}</div>
-
-        {/* Mobile Navbar (Hamburger Icon) */}
-        <div className='md:hidden flex items-center'>
-          <button
-            onClick={toggleMenu}
-            className='text-white focus:outline-none hover:text-yellow-300 transition-all duration-300'
-          >
-            {isMenuOpen ? (
-              <svg
-                className='w-8 h-8'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M6 18L18 6M6 6l12 12'
-                ></path>
-              </svg>
-            ) : (
-              <svg
-                className='w-8 h-8'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M4 6h16M4 12h16M4 18h16'
-                ></path>
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Dropdown Menu */}
-      {isMenuOpen && (
-        <div className='md:hidden bg-gray-800 text-white py-6 space-y-6'>
-          {isLoggedIn ? (
-            <>
-              {['Dashboard', 'Add Expense', 'Track Expense', 'Profile'].map(
-                // Removed 'Reports' from this array
-                (text, index) => (
-                  <Link
-                    key={index}
-                    to={`/${text.toLowerCase().replace(' ', '-')}`}
-                    className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
-                  >
-                    {text}
-                  </Link>
-                )
-              )}
-              {/* Added Reports link separately */}
+    <div>
+      <nav className='w-64 bg-white shadow-lg p-4 hidden md:block h-screen'>
+        <h1 className='text-2xl font-bold text-violet-600 mb-8'>
+          Pocket Expense
+        </h1>
+        <ul className='space-y-2 font-medium'>
+          {navItems.map(item => (
+            <li key={item.href}>
               <Link
-                to='/report'
-                className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
+                to={item.href}
+                className={`flex items-center p-2 rounded-lg ${
+                  pathname === item.href
+                    ? 'bg-blue-100 text-blue-600'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
               >
-                Reports
+                <item.icon className='mr-3 h-5 w-5' />
+                {item.label}
               </Link>
-              <button
-                onClick={handleLogout}
-                className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
+            </li>
+          ))}
+          <li>
+            <Link
+              onClick={handleLogout}
+              className='flex items-center w-full p-2 rounded-lg text-gray-600 hover:bg-gray-100 '
+            >
+              <LogOut className='mr-3 h-5 w-5' />
+              Logout
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
+      {/* Bottom Navigation for Mobile */}
+      <nav className='md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg z-50'>
+        <ul className='flex overflow-x-auto font-medium justify-around p-3 space-x-4'>
+          {navItems.map(item => (
+            <li key={item.href} className='flex-1 min-w-[70px]'>
               <Link
-                to='/login'
-                className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
+                to={item.href}
+                className='flex flex-col items-center p-2 text-center text-gray-600 hover:text-blue-600'
               >
-                Login
+                <item.icon className='h-6 w-6 mb-1' />
+                <span className='text-xs'>{item.label}</span>
               </Link>
-              <Link
-                to='/register'
-                className='block text-xl text-white px-6 py-3 hover:text-yellow-300 hover:scale-105 hover:shadow-lg hover:rounded-lg transition-all duration-300'
-              >
-                Register
-              </Link>
-            </>
-          )}
-        </div>
-      )}
-    </nav>
+            </li>
+          ))}
+          <li>
+            <button
+              onClick={handleLogout}
+              className='flex flex-col items-center p-2 text-center text-gray-600 hover:text-blue-600'
+            >
+              <LogOut className='h-6 w-6 mb-1' />
+              <span className='text-xs'>Logout</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
   )
 }
 

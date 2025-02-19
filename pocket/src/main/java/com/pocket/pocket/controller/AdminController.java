@@ -10,19 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pocket.pocket.model.UserExpenseData;
-import com.pocket.pocket.service.AdminServeice;
+import com.pocket.pocket.service.AdminService;
 import com.pocket.pocket.service.CsvExporter;
 
 @RestController
 public class AdminController {
 
   @Autowired
-  private final AdminServeice adminServeice;
-
-  @Autowired
-  public AdminController(AdminServeice adminServeice) {
-    this.adminServeice = adminServeice;
-  }
+  private AdminService adminServeice;
 
   @GetMapping("/expense-data")
   public List<UserExpenseData> getAllExpenseData() {

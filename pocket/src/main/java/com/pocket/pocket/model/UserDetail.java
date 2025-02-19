@@ -1,14 +1,19 @@
 package com.pocket.pocket.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class UserDetail {
     private int userId;
     private String name;
+    private String gender;
+    private Date dob;
     private String email;
+    private String token;
     private List<Budget> budgets;
     private List<Expense> expenses;
     private List<Goals> goals;
+    private TotalExpense totalExpense;
 
     public int getUserId() {
         return userId;
@@ -24,6 +29,22 @@ public class UserDetail {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
     }
 
     public String getEmail() {
@@ -58,14 +79,36 @@ public class UserDetail {
         this.goals = goals;
     }
 
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public TotalExpense getTotalExpense() {
+        return totalExpense;
+    }
+
+    public void setTotalExpense(TotalExpense totalExpense) {
+        this.totalExpense = totalExpense;
+    }
+
     @Override
     public String toString() {
         return "UserDetail{" +
-                "name='" + name + '\'' +
+                "userId=" + userId +
+                ", name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", dob=" + dob +
                 ", email='" + email + '\'' +
+                ", token='" + token + '\'' +
                 ", budgets=" + budgets +
                 ", expenses=" + expenses +
                 ", goals=" + goals +
+                ", totalExpense=" + totalExpense +
                 '}';
     }
 }

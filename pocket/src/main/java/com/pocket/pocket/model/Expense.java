@@ -17,6 +17,7 @@ public class Expense {
     private String category;
     private Date date;
     private String description;
+    private String paymentMethod;
 
     public int getExpenseId() {
         return expenseId;
@@ -66,6 +67,14 @@ public class Expense {
         this.description = description;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
     @Override
     public String toString() {
         return "Expense{" +
@@ -75,6 +84,7 @@ public class Expense {
                 ", category='" + category + '\'' +
                 ", date=" + date +
                 ", description='" + description + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
                 '}';
     }
 }

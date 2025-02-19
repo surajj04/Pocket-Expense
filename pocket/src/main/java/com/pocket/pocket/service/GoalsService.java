@@ -29,4 +29,8 @@ public class GoalsService {
         goalsRepo.deleteById(id);
     }
 
+    public List<Goals> getAllGoals(int id) {
+        return goalsRepo.findByUserId(id);
+    }
+
 }

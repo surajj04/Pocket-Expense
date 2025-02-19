@@ -23,7 +23,7 @@ public class BudgetService {
         return budgetRepo.save(budget);
     }
 
-    public void updateBudget(Budget budget) {
-        budgetRepo.save(budget);
+    public Budget updateBudget(Budget budget) {
+        return budgetRepo.save(budget);
     }
 }

@@ -1,9 +1,6 @@
 package com.pocket.pocket.controller;
 
-import com.pocket.pocket.model.Login;
-import com.pocket.pocket.model.UpdateUser;
-import com.pocket.pocket.model.User;
-import com.pocket.pocket.model.UserDetail;
+import com.pocket.pocket.model.*;
 import com.pocket.pocket.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,13 +28,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody Login user) {
+    public UserDetail loginUser(@RequestBody Login user) {
         boolean isValid = service.validatePassword(user.getEmail(), user.getPassword());
         if (isValid) {
-            return ResponseEntity.ok("Login successful");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+            return service.getUserDetail(service.getToken(user.getEmail(), user.getPassword()));
         }
+        return null;
     }
 
 
@@ -79,4 +75,16 @@ public class UserController {
     public void deleteUser(@PathVariable String token) {
         service.deleteUser(token);
     }
+
+    @GetMapping("/reports/{id}")
+    public List<Report> userReports(@PathVariable int id){
+        return service.getReport(id);
+    }
+
+    @PutMapping("/updateProfile")
+    public UserDetail updateProfile(@RequestBody UserDetail user) {
+        System.out.println("update method called....");
+        return service.updateUser(user);
+    }
+
 }

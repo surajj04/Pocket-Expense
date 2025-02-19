@@ -1,15 +1,15 @@
 package com.pocket.pocket.model;
 
-public class UserExpenseData {
+import java.time.LocalDate;
 
-  private int id;
+public class UserExpenseData {
   private double amount;
   private String category;
-  private String date;
+  private LocalDate date; // Use LocalDate instead of java.sql.Date
   private String description;
   private String gender;
   private String name;
-  private String dob;
+  private LocalDate dob; // Use LocalDate instead of java.sql.Date
   private int userId;
 
   // Default constructor
@@ -17,9 +17,8 @@ public class UserExpenseData {
   }
 
   // Parameterized constructor
-  public UserExpenseData(int id, double amount, String category, String date, String description,
-      String gender, String name, String dob, int userId) {
-    this.id = id;
+  public UserExpenseData(double amount, String category, LocalDate date, String description,
+      String gender, String name, LocalDate dob, int userId) {
     this.amount = amount;
     this.category = category;
     this.date = date;
@@ -28,15 +27,6 @@ public class UserExpenseData {
     this.name = name;
     this.dob = dob;
     this.userId = userId;
-  }
-
-  // Getters and Setters
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
   }
 
   public double getAmount() {
@@ -55,11 +45,11 @@ public class UserExpenseData {
     this.category = category;
   }
 
-  public String getDate() {
+  public LocalDate getDate() {
     return date;
   }
 
-  public void setDate(String date) {
+  public void setDate(LocalDate date) {
     this.date = date;
   }
 
@@ -87,11 +77,11 @@ public class UserExpenseData {
     this.name = name;
   }
 
-  public String getDob() {
+  public LocalDate getDob() {
     return dob;
   }
 
-  public void setDob(String dob) {
+  public void setDob(LocalDate dob) {
     this.dob = dob;
   }
 
@@ -107,14 +97,13 @@ public class UserExpenseData {
   @Override
   public String toString() {
     return "UserExpenseData{" +
-        "id=" + id +
         ", amount=" + amount +
         ", category='" + category + '\'' +
-        ", date='" + date + '\'' +
+        ", date=" + date +
         ", description='" + description + '\'' +
         ", gender='" + gender + '\'' +
         ", name='" + name + '\'' +
-        ", dob='" + dob + '\'' +
+        ", dob=" + dob +
         ", userId=" + userId +
         '}';
   }

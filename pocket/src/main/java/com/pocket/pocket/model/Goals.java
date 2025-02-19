@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.util.Date;
+
 @Entity
 public class Goals {
     @Id
@@ -12,8 +14,10 @@ public class Goals {
     private int id;
     private int userId;
     private String description;
-    private String amount;
-    private String status; // complete incomplete
+    private double amount;
+    private double targetAmount;
+    private String status;
+    private Date targetDate;
 
     public int getId() {
         return id;
@@ -39,12 +43,20 @@ public class Goals {
         this.description = description;
     }
 
-    public String getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public double getTargetAmount() {
+        return targetAmount;
+    }
+
+    public void setTargetAmount(double targetAmount) {
+        this.targetAmount = targetAmount;
     }
 
     public String getStatus() {
@@ -55,14 +67,24 @@ public class Goals {
         this.status = status;
     }
 
+    public Date getTargetDate() {
+        return targetDate;
+    }
+
+    public void setTargetDate(Date targetDate) {
+        this.targetDate = targetDate;
+    }
+
     @Override
     public String toString() {
         return "Goals{" +
                 "id=" + id +
                 ", userId=" + userId +
                 ", description='" + description + '\'' +
-                ", amount='" + amount + '\'' +
+                ", amount=" + amount +
+                ", targetAmount=" + targetAmount +
                 ", status='" + status + '\'' +
+                ", targetDate=" + targetDate +
                 '}';
     }
 }

@@ -1,8 +1,6 @@
 package com.pocket.pocket.service;
 
-import com.pocket.pocket.model.UpdateUser;
-import com.pocket.pocket.model.User;
-import com.pocket.pocket.model.UserDetail;
+import com.pocket.pocket.model.*;
 import com.pocket.pocket.repository.BudgetRepo;
 import com.pocket.pocket.repository.ExpenseRepo;
 import com.pocket.pocket.repository.GoalsRepo;
@@ -11,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -24,6 +21,9 @@ public class UserService {
     private ExpenseRepo expenseRepo;
     @Autowired
     private GoalsRepo goalsRepo;
+    @Autowired
+    private ExpenseService expenseService;
+
 
     @Autowired
     private PasswordEncoder encoder;
@@ -101,11 +101,14 @@ public class UserService {
 
         user.setUserId(temp.getUserId());
         user.setName(temp.getName());
+        user.setGender(temp.getGender());
+        user.setDob(temp.getDob());
         user.setEmail(temp.getEmail());
         user.setBudgets(budgetRepo.findByUserId(user.getUserId()));
         user.setExpenses(expenseRepo.findByUserId(user.getUserId()));
         user.setGoals(goalsRepo.findByUserId(user.getUserId()));
-
+        user.setToken(temp.getToken());
+        user.setTotalExpense(expenseService.getTotalExpense(user.getUserId()));
         return user;
     }
 
@@ -163,4 +166,87 @@ public class UserService {
 
         return user;
     }
+
+    public List<Report> getReport(int id) {
+        List<Report> reports = new ArrayList<>();
+
+        List<Budget> budgets = budgetRepo.findByUserId(id);
+
+        double[] categoryValues = getAllValues(id);
+
+        for (Budget b : budgets) {
+            String HASHID = UUID.randomUUID().toString();
+            Report r = new Report();
+            r.setId(HASHID);
+            r.setMonth(b.getDate().toString());
+            r.setAmount(b.getCurrentBalance());
+            r.setFood(categoryValues[0]);
+            r.setBills(categoryValues[1]);
+            r.setTravel(categoryValues[2]);
+            r.setOther(categoryValues[3]);
+            r.setShopping(categoryValues[4]);
+
+            reports.add(r);
+        }
+
+        return reports;
+    }
+
+    public double[] getAllValues(int id) {
+        List<Expense> expenses = expenseRepo.findByUserId(id);
+
+        double food = 0;
+        double bills = 0;
+        double travel = 0;
+        double shopping = 0;
+        double other = 0;
+
+        for (Expense e : expenses) {
+            switch (e.getCategory()) {
+                case "Food":
+                    food += e.getAmount();
+                    break;
+                case "Bills":
+                    bills += e.getAmount();
+                    break;
+                case "Travel":
+                    travel += e.getAmount();
+                    break;
+                case "Shopping":
+                    travel += e.getAmount();
+                    break;
+                case "Other":
+                    other += e.getAmount();
+                    break;
+            }
+        }
+
+        return new double[]{food, bills, travel, other,shopping};
+    }
+
+
+
+    public static String getMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int month = calendar.get(Calendar.MONTH);
+
+        String[] months = {"Jan", "Feb", "March", "April", "May", "June",
+                "July", "Aug", "Sept", "Oct", "Nov", "Dec"};
+
+        return months[month];
+    }
+
+    public UserDetail updateUser(UserDetail user) {
+        User temp = userRepo.findById(user.getUserId()).orElse(new User());
+        temp.setName(user.getName());
+        temp.setGender(user.getGender());
+        temp.setDob(user.getDob());
+        temp.setEmail(user.getEmail());
+        userRepo.save(temp);
+
+        return user;
+    }
+
 }

@@ -1,137 +1,88 @@
-import React, { useEffect, useState } from 'react'
-import Login from './pages/auth/Login'
-import Dashboard from './pages/home/Dashboard'
-import AddExpense from './pages/home/Addexpense'
+import React, { useEffect } from 'react'
 import Navbar from './components/Navbar'
 import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate
-} from 'react-router-dom'
-import Profile from './pages/home/Profile'
-import TrackExpense from './pages/home/Trackexpense'
-import UserRegister from './pages/auth/Register'
-import Home from './pages/home/Home'
-import RegistrationSuccess from './components/RegistrationSuccess'
-import axios from 'axios'
-import BudgetSetupPage from './pages/home/BudgetSetupPage'
-import LoadingPage from './components/Loading'
-import Settings from './pages/home/Settings'
-import ExpenseReport from './pages/report/ExpenseReport'
-import AdminDashboard from './assets/admin/AdminDashboard'
+  BarChart2,
+  FileText,
+  Home,
+  MessageSquare,
+  PlusCircle,
+  Target,
+  User,
+  Wallet
+} from 'lucide-react'
+import { Route, Routes } from 'react-router-dom'
+import Login from './pages/Login'
+import Dashboard from './secure/Dashboard'
+import AddExpense from './secure/AddExpense'
+import Budget from './secure/Budget'
+import Expenses from './secure/Expenses'
+import Reports from './secure/Reports'
+import Goals from './secure/Goals'
+import Assistant from './secure/Assistant'
+import Profile from './secure/Profile'
+import Register from './pages/Register'
+import BudgetSetupPage from './secure/BudgetSetup'
+import { useDispatch, useSelector } from 'react-redux'
+import { login } from './store/userSlice'
+import NotFound from './components/NotFound'
 
 function App () {
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem('isLoggedIn') === 'true'
-  )
-  const [user, setUser] = useState(localStorage.getItem('userToken'))
-  const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
 
-  const [admin, setAdmin] = useState(false)
+  const user = useSelector(state => state.user.user)
 
   useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const res = await axios.post(`http://localhost:8080/validtoken/${user}`)
-        if (res.data) {
-          setIsLoggedIn(true)
-          localStorage.setItem('isLoggedIn', 'true')
-        } else {
-          setIsLoggedIn(false)
-          localStorage.setItem('isLoggedIn', 'false')
-          localStorage.removeItem('userToken')
-        }
-      } catch (error) {
-        console.error('Error validating token:', error)
-        setIsLoggedIn(false)
-        localStorage.setItem('isLoggedIn', 'false')
-      }
+    const storedUser = JSON.parse(localStorage.getItem('user'))
+    if (storedUser) {
+      dispatch(login(storedUser))
     }
+  }, [dispatch])
 
-    if (user) {
-      checkToken()
-    }
-  }, [user])
-
-  const handleLogout = async () => {
-    const confirmLogout = window.confirm('Do you want to logout?')
-    if (confirmLogout) {
-      try {
-        await axios.post(`http://localhost:8080/logout/${user}`)
-        setIsLoggedIn(false)
-        localStorage.setItem('isLoggedIn', 'false')
-        localStorage.removeItem('userToken')
-        localStorage.clear() // Clears all items in localStorage
-        setUser(null)
-      } catch (err) {
-        window.alert(err)
-      }
-    }
-  }
-
-  if (loading) {
-    return <LoadingPage />
-  }
-  // localStorage.clear() // Clears all items in localStorage
+  const navItems = [
+    { href: '/', icon: Home, label: 'Dashboard' },
+    { href: '/add-expense', icon: PlusCircle, label: 'Add Expense' },
+    { href: '/budget', icon: Wallet, label: 'Budget' },
+    { href: '/expenses', icon: FileText, label: 'Expenses' },
+    { href: '/reports', icon: BarChart2, label: 'Reports' },
+    { href: '/goals', icon: Target, label: 'Savings Goals' },
+    { href: '/assistant', icon: MessageSquare, label: 'Assistant' },
+    { href: '/profile', icon: User, label: 'Profile' }
+  ]
   return (
-    <div>
-      <Router>
-        {!admin && (
-          <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-        )}
-        <div className='container mx-auto p-6'>
-          <Routes>
-            <Route
-              path='/admin'
-              element={<AdminDashboard setAdmin={setAdmin} />}
-            />
-            <Route
-              path='/dashboard'
-              element={isLoggedIn ? <Dashboard /> : <Navigate to='/login' />}
-            />
-            <Route
-              path='/add-expense'
-              element={isLoggedIn ? <AddExpense /> : <Navigate to='/login' />}
-            />
-            <Route
-              path='/track-expense'
-              element={isLoggedIn ? <TrackExpense /> : <Navigate to='/login' />}
-            />
-            <Route
-              path='/profile'
-              element={isLoggedIn ? <Profile /> : <Navigate to='/login' />}
-            />
-            <Route
-              path='/setup'
-              element={
-                isLoggedIn ? <BudgetSetupPage /> : <Navigate to='/login' />
-              }
-            />
-            <Route
-              path='/registrationSuccess'
-              element={<RegistrationSuccess />}
-            />
-            <Route
-              path='/'
-              element={isLoggedIn ? <Dashboard /> : <Navigate to='/login' />}
-            />
-            <Route
-              path='/settings'
-              element={isLoggedIn ? <Settings /> : <Navigate to='/login' />}
-            />
-            <Route
-              path='/report'
-              element={
-                isLoggedIn ? <ExpenseReport /> : <Navigate to='/login' />
-              }
-            />
-            <Route path='/login' element={<Login />} />
-            <Route path='/register' element={<UserRegister />} />
-            <Route path='/home' element={<Home isLoggedIn={isLoggedIn} />} />
-          </Routes>
+    <div className=''>
+      <div className=''>
+        <div className='flex h-screen bg-gradient-to-br from-gray-50 to-gray-100'>
+          {user && <Navbar navItems={navItems} />}
+          <main className='flex-1 overflow-y-auto p-8 max-sm:p-0 pb-20 md:pb-8'>
+            <Routes>
+              <Route path='/' element={user ? <Dashboard /> : <Login />} />
+              <Route
+                path='/add-expense'
+                element={user ? <AddExpense /> : <Login />}
+              />
+              <Route path='/budget' element={user ? <Budget /> : <Login />} />
+              <Route
+                path='/expenses'
+                element={user ? <Expenses /> : <Login />}
+              />
+              <Route path='/reports' element={user ? <Reports /> : <Login />} />
+              <Route path='/goals' element={user ? <Goals /> : <Login />} />
+              <Route
+                path='/assistant'
+                element={user ? <Assistant /> : <Login />}
+              />
+              <Route path='/profile' element={user ? <Profile /> : <Login />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/register' element={<Register />} />
+              <Route
+                path='/budget-setup'
+                element={user ? <BudgetSetupPage /> : <Login />}
+              />
+              <Route path='*' element={<NotFound />} />
+            </Routes>
+          </main>
         </div>
-      </Router>
+      </div>
     </div>
   )
 }

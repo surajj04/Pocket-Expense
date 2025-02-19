@@ -2,8 +2,10 @@ package com.pocket.pocket.service;
 
 import com.pocket.pocket.model.Budget;
 import com.pocket.pocket.model.Expense;
+import com.pocket.pocket.model.TotalExpense;
 import com.pocket.pocket.repository.BudgetRepo;
 import com.pocket.pocket.repository.ExpenseRepo;
+import com.pocket.pocket.repository.TotalExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ public class ExpenseService {
     private ExpenseRepo expenseRepo;
     @Autowired
     private BudgetService budgetService;
+    @Autowired
+    private TotalExpenseRepository totalExpenseRepository;
 
     public List<Expense> getAllExpense() {
         return expenseRepo.findAll();
@@ -26,8 +30,8 @@ public class ExpenseService {
     }
 
     public Expense addExpense(Expense expense) {
-        System.out.println(expense);
         manageBudget(expense);
+        updateTotalExpense(expense);
         return expenseRepo.save(expense);
     }
 
@@ -39,7 +43,7 @@ public class ExpenseService {
             return;
         }
 
-        Budget budget = budgets.get(budgets.size() - 1);
+        Budget budget = budgets.getLast();
 
         String category = expense.getCategory();
         if (category == null) {
@@ -65,6 +69,41 @@ public class ExpenseService {
         }
 
         budgetService.updateBudget(budget);
+    }
+
+    public TotalExpense updateTotalExpense(Expense expense) {
+        TotalExpense totalExpense = totalExpenseRepository.findByUserId(expense.getUserId());
+        if (totalExpense == null) {
+            return totalExpenseRepository.save(fillTheData(expense, new TotalExpense()));
+        }
+        return totalExpenseRepository.save(fillTheData(expense, totalExpense));
+    }
+
+    public TotalExpense addTotalExpense(TotalExpense expense) {
+        return totalExpenseRepository.save(expense);
+    }
+
+    public TotalExpense getTotalExpense(int userId) {
+        return totalExpenseRepository.findByUserId(userId);
+    }
+
+    public TotalExpense fillTheData(Expense expense, TotalExpense totalExpense) {
+        switch (expense.getCategory()) {
+            case "food":
+                totalExpense.setFood(totalExpense.getFood() + expense.getAmount());
+                break;
+            case "travel":
+                totalExpense.setTravel(totalExpense.getTravel() + expense.getAmount());
+                break;
+            case "shopping":
+                totalExpense.setShopping(totalExpense.getShopping() + expense.getAmount());
+                break;
+            case "other":
+                totalExpense.setOther(totalExpense.getOther() + expense.getAmount());
+                break;
+        }
+        totalExpense.setUserId(expense.getUserId());
+        return totalExpense;
     }
 
 }

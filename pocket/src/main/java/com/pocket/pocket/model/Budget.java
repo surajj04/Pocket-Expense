@@ -20,6 +20,7 @@ public class Budget {
     private double food;
     private double entertainment;
     private double travel;
+    private double shopping;
     private double other;
 
     public int getBudgetId() {
@@ -102,6 +103,14 @@ public class Budget {
         this.other = other;
     }
 
+    public double getShopping() {
+        return shopping;
+    }
+
+    public void setShopping(double shopping) {
+        this.shopping = shopping;
+    }
+
     @Override
     public String toString() {
         return "Budget{" +
@@ -114,6 +123,7 @@ public class Budget {
                 ", food=" + food +
                 ", entertainment=" + entertainment +
                 ", travel=" + travel +
+                ", shopping=" + shopping +
                 ", other=" + other +
                 '}';
     }
