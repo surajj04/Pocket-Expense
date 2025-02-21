@@ -6,6 +6,7 @@ import {
   Home,
   MessageSquare,
   PlusCircle,
+  ScrollText,
   Target,
   User,
   Wallet
@@ -25,6 +26,7 @@ import BudgetSetupPage from './secure/BudgetSetup'
 import { useDispatch, useSelector } from 'react-redux'
 import { login } from './store/userSlice'
 import NotFound from './components/NotFound'
+import ImportStatements from './secure/ImportStatements'
 
 function App () {
   const dispatch = useDispatch()
@@ -41,6 +43,11 @@ function App () {
   const navItems = [
     { href: '/', icon: Home, label: 'Dashboard' },
     { href: '/add-expense', icon: PlusCircle, label: 'Add Expense' },
+    {
+      href: '/import-statements',
+      icon: ScrollText,
+      label: 'Import Statements'
+    },
     { href: '/budget', icon: Wallet, label: 'Budget' },
     { href: '/expenses', icon: FileText, label: 'Expenses' },
     { href: '/reports', icon: BarChart2, label: 'Reports' },
@@ -77,6 +84,10 @@ function App () {
               <Route
                 path='/budget-setup'
                 element={user ? <BudgetSetupPage /> : <Login />}
+              />
+              <Route
+                path='/import-statements'
+                element={user ? <ImportStatements /> : <Login />}
               />
               <Route path='*' element={<NotFound />} />
             </Routes>

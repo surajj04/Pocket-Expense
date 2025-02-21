@@ -1,24 +1,41 @@
 package com.pocket.pocket;
 
-import java.util.Calendar;
-import java.util.Date;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+
+import java.io.File;
+import java.io.IOException;
 
 public class Demo {
-    public static void main(String[] args) {
-        Date date = new Date(15 - 10 - 2002);
-        String result = getMonth(date);
-        System.out.println(result);
-    }
+    public static void main(String[] args) throws IOException {
+        File pdfFile = new File("uploads/PhonePe_Transaction_Statement.pdf");
 
-    public static String getMonth(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
 
-        int month = calendar.get(Calendar.MONTH);
+        if (!pdfFile.exists()) {
+            System.err.println("Error: PDF file not found at " + pdfFile.getAbsolutePath());
+            return;
+        }
 
-        String[] months = {"Jan", "Feb", "March", "April", "May", "June",
-                "July", "Aug", "Sept", "Oct", "Nov", "Dec"};
 
-        return months[month];
+        PDDocument document = Loader.loadPDF(pdfFile,"9356569013");
+        PDFTextStripper pdfTextStripper = new PDFTextStripper();
+
+        String extractedText = pdfTextStripper.getText(document);
+
+        String[] lines = extractedText.split("\n");
+
+        System.out.println("======= PhonePe Transaction Statement =======");
+        for (String line : lines) {
+            if (!line.trim().isEmpty()) { // Ignore empty lines
+                System.out.println("| " + line.trim());
+            }
+        }
+        System.out.println("=============================================");
+
+        document.close();
+
+
+
     }
 }
