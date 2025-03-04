@@ -1,42 +1,6 @@
 <h1 align="center">
   <br>
   <a href="https://github.com/surajj04/Pocket-Expense">
-    <img src="https://png.pngtree.com/png-vector/20221114/ourmid/pngtree-indian-money-icon-flying-note-free-vector-clipart-images-png-image_6450241.png" 
-         alt="Markdownify" width="200">
-  </a>
-  <br>
-  Pocket (Expense Tracking Application)
-  <br>
-</h1>
-
-<h4 align="center">A simple and efficient Expense Tracking web application built with <a href="https://react.dev/" target="_blank">React.js</a> and <a href="https://spring.io/projects/spring-boot" target="_blank">Spring Boot</a>.</h4>
-
-<p align="center">
-  <a href="https://react.dev/">
-    <img src="https://img.shields.io/badge/Frontend-React.js-61DAFB.svg?style=flat" alt="React.js">
-  </a>
-  <a href="https://spring.io/projects/spring-boot">
-    <img src="https://img.shields.io/badge/Backend-Spring%20Boot-6DB33F.svg?style=flat" alt="Spring Boot">
-  </a>
-   <a href="https://spring.ai/">
-    <img src="https://img.shields.io/badge/AI-Spring%20AI-0db7ed.svg?style=flat" alt="Spring AI">
-  </a>
-</p>
-
-<p align="center">
-  <a href="#key-features">Key Features</a> •
-  <a href="#how-to-use">How To Use</a> •
-  <a href="#download">Download</a> •
-  <a href="#credits">Credits</a> •
-  <a href="#related">Related</a> •
-  <a href="#license">License</a>
-</p>
-
-![screenshot](/public/logo.png)
-
-<h1 align="center">
-  <br>
-  <a href="https://github.com/surajj04/Pocket-Expense">
     <img src="https://png.pngtree.com/png-vector/20221114/ourmid/pngtree-indian-money-icon-flying-note-free-vector-clipart-images-png-image_6450241.png"
          alt="Pocket-Expense" width="150">
   </a>
