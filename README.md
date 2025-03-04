@@ -1,67 +1,130 @@
-<div align="center">
-  <img height="150" src="https://camo.githubusercontent.com/62da68eb62b1e5f175f7d1f0191dd89a653d7908feb22d37d4a0ab07365d6791/68747470733a2f2f6d656469612e67697068792e636f6d2f6d656469612f4d3967624264396e6244724f5475314d71782f67697068792e676966"  />
-</div>
+<h1 align="center">
+  <br>
+  <a href="https://github.com/surajj04/Pocket-Expense">
+    <img src="https://png.pngtree.com/png-vector/20221114/ourmid/pngtree-indian-money-icon-flying-note-free-vector-clipart-images-png-image_6450241.png" 
+         alt="Markdownify" width="200">
+  </a>
+  <br>
+  Pocket (Expense Tracking Application)
+  <br>
+</h1>
 
-###
+<h4 align="center">A simple and efficient Expense Tracking web application built with <a href="https://react.dev/" target="_blank">React.js</a> and <a href="https://spring.io/projects/spring-boot" target="_blank">Spring Boot</a>.</h4>
 
-<div align="center">
-  <img src="https://img.shields.io/static/v1?message=LinkedIn&logo=linkedin&label=&color=0077B5&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="linkedin logo"  />
-  <img src="https://img.shields.io/static/v1?message=Youtube&logo=youtube&label=&color=FF0000&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="youtube logo"  />
-  <img src="https://img.shields.io/static/v1?message=Twitter&logo=twitter&label=&color=1DA1F2&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="twitter logo"  />
-</div>
+<p align="center">
+  <a href="https://react.dev/">
+    <img src="https://img.shields.io/badge/Frontend-React.js-61DAFB.svg?style=flat" alt="React.js">
+  </a>
+  <a href="https://spring.io/projects/spring-boot">
+    <img src="https://img.shields.io/badge/Backend-Spring%20Boot-6DB33F.svg?style=flat" alt="Spring Boot">
+  </a>
+   <a href="https://spring.ai/">
+    <img src="https://img.shields.io/badge/AI-Spring%20AI-0db7ed.svg?style=flat" alt="Spring AI">
+  </a>
+</p>
 
-###
+<p align="center">
+  <a href="#key-features">Key Features</a> •
+  <a href="#how-to-use">How To Use</a> •
+  <a href="#download">Download</a> •
+  <a href="#credits">Credits</a> •
+  <a href="#related">Related</a> •
+  <a href="#license">License</a>
+</p>
 
-<div align="center">
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=maurodesouza.maurodesouza&"  />
-</div>
+![screenshot](/public/logo.png)
 
-###
+<h1 align="center">
+  <br>
+  <a href="https://github.com/surajj04/Pocket-Expense">
+    <img src="https://png.pngtree.com/png-vector/20221114/ourmid/pngtree-indian-money-icon-flying-note-free-vector-clipart-images-png-image_6450241.png"
+         alt="Pocket-Expense" width="150">
+  </a>
+  <br>
+  Pocket (Expense Tracking Application)
+  <br>
+</h1>
 
-<h1 align="center">hey there 👋</h1>
+<h4 align="center">A simple and efficient Expense Tracking web application built with <a href="https://react.dev/" target="_blank">React.js</a> and <a href="https://spring.io/projects/spring-boot" target="_blank">Spring Boot</a>.</h4>
 
-###
+<p align="center">
+  <a href="https://react.dev/">
+    <img src="https://img.shields.io/badge/Frontend-React.js-61DAFB.svg?style=flat" alt="React.js">
+  </a>
+  <a href="https://spring.io/projects/spring-boot">
+    <img src="https://img.shields.io/badge/Backend-Spring%20Boot-6DB33F.svg?style=flat" alt="Spring Boot">
+  </a>
+  <a href="https://spring.ai/">
+    <img src="https://img.shields.io/badge/AI-Spring%20AI-0db7ed.svg?style=flat" alt="Spring AI">
+  </a>
+</p>
 
-<h3 align="left">👩‍💻  About Me</h3>
+<p align="center">
+  <a href="#key-features">Key Features</a> •
+  <a href="#how-to-use">How To Use</a> •
+  <a href="#download">Download</a> •
+  <a href="#credits">Credits</a> •
+  <a href="#related">Related</a> •
+  <a href="#license">License</a>
+</p>
 
-###
+<p align="center">
+  <img src="/public/logo.png" alt="Pocket-Expense Logo" width="200">
+</p>
 
-<p align="left">I'm ... from ....<br><br>- 🔭 I’m working as ...<br>- 📚 I'm currently learning ...<br>- ⚡ In my free time I ...</p>
+## Key Features
 
-###
+- **User Authentication** – Secure login and registration using JWT authentication.
+- **Expense Tracking** – Add, edit, and delete expenses with categories.
+- **Budget Management** – Set monthly budgets and track spending.
+- **AI-Powered Chatbot** – Get financial insights and suggestions using Spring AI.
+- **Expense History** – View past transactions and filter by date or category.
+- **Import Statements** – Import bank or UPI statements for analysis.
+- **Cross-Platform** – Access your account from any device via the web.
 
-<h3 align="left">🛠 Language and tools</h3>
+## 🚀 How To Use
 
-###
+### Prerequisites
 
-<div align="left">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg" height="40" alt="go logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-original.svg" height="40" alt="rust logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-plain-wordmark.svg" height="40" alt="ruby logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dot-net/dot-net-plain-wordmark.svg" height="40" alt="dot-net logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain-wordmark.svg" height="40" alt="firebase logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-line-wordmark.svg" height="40" alt="amazonwebservices logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/circleci/circleci-plain.svg" height="40" alt="circleci logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" height="40" alt="kubernetes logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-plain-wordmark.svg" height="40" alt="docker logo"  />
-</div>
+Make sure you have the following installed:
 
-###
+- [Git](https://git-scm.com)
+- [Node.js](https://nodejs.org/en/download/) (comes with [npm](http://npmjs.com))
+- [Java JDK 17+](https://adoptium.net/)
+- [Maven](https://maven.apache.org/)
 
-<h3 align="left">🔥   My Stats :</h3>
+### Clone the Repository
 
-###
+```bash
+# Clone this repository
+$ git clone https://github.com/YOUR_GITHUB_USERNAME/Pocket-Expense-Tracker
 
-<div align="center">
-  <img src="https://streak-stats.demolab.com?user=maurodesouza&locale=en&mode=daily&theme=dark&hide_border=false&border_radius=5&order=3" height="220" alt="streak graph"  />
-</div>
+# Navigate into the project directory
+$ cd Pocket-Expense-Tracker
+```
 
-###
+### Backend Setup
+
+```bash
+# Navigate to the backend directory
+$ cd backend
+
+# Build the project
+$ mvn clean install
+
+# Run the backend server
+$ mvn spring-boot:run
+```
+
+### Frontend Setup
+
+```bash
+# Navigate to the frontend directory
+$ cd ../frontend
+
+# Install dependencies
+$ npm install
+
+# Start the React app
+$ npm start
+```
