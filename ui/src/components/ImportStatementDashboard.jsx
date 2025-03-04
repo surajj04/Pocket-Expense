@@ -6,9 +6,7 @@ import MerchantInsights from './MerchantInsights'
 import RefundsAndFailed from './RefundsAndFailed'
 import SpendingTrends from './SpendingTrends'
 import RecentTransactions from './RecentTransactions'
-import PaymentModeAnalysis from './PaymentModeAnalysis'
 import HighValueTransactions from './HighValueTransactions'
-import BudgetWarning from './BudgetWarning'
 
 const Dashboard = ({ data, onUploadNewStatement }) => {
   return (

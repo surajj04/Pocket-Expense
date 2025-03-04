@@ -24,7 +24,10 @@ public class ChatController {
     @GetMapping("/chat/{message}/{token}")
     public String chat(@PathVariable String message, @PathVariable String token) {
         UserDetail userDetail = userService.getUserDetail(token);
-        message = message + " and this is the userDetail according to that give them a finance tips or answer of the questions and give me the short response and give me the response like that i can easily show on the screen and dont mention the conclusion " + userDetail;
+        message = message + "Respond concisely based on user queries. If the query is finance-related, provide relevant financial tips. give the short response and response like that i can easily show on the screen and don't mention the conclusion. User details: " + userDetail;
+
+//        give the response according to the user message if user asking about the finance related questions that time only this is the userDetail according to that give them a finance tips or answer of the questions and give me the short response and give me the response like that i can easily show on the screen and dont mention the conclusion " + userDetail;
+
         return chatClient
                 .prompt()
                 .user(message)

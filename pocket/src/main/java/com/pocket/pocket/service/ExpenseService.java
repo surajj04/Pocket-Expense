@@ -30,6 +30,7 @@ public class ExpenseService {
     }
 
     public Expense addExpense(Expense expense) {
+        System.out.println(expense);
         manageBudget(expense);
         updateTotalExpense(expense);
         return expenseRepo.save(expense);

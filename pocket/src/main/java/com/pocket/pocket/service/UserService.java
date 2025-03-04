@@ -109,6 +109,9 @@ public class UserService {
         user.setGoals(goalsRepo.findByUserId(user.getUserId()));
         user.setToken(temp.getToken());
         user.setTotalExpense(expenseService.getTotalExpense(user.getUserId()));
+        user.setCountry(temp.getCountry());
+        user.setState(temp.getState());
+        user.setCity(temp.getCity());
         return user;
     }
 
@@ -244,8 +247,10 @@ public class UserService {
         temp.setGender(user.getGender());
         temp.setDob(user.getDob());
         temp.setEmail(user.getEmail());
+        temp.setCountry(user.getCountry());
+        temp.setState(user.getState());
+        temp.setCity(user.getCity());
         userRepo.save(temp);
-
         return user;
     }
 

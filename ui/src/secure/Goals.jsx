@@ -2,6 +2,8 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchData } from '../store/userSlice'
+import RegistrationSuccessAlert from '../components/SuccessAlert'
+import InvalidCredentialsAlert from '../components/InvalidAlert'
 
 const API_KEY = import.meta.env.VITE_APP_API_BASE_URL
 
@@ -9,24 +11,46 @@ export default function GoalsPage () {
   const user = useSelector(state => state.user.user)
 
   const [goals, setGoals] = useState(user?.goals)
+  const [successAlert, setSuccessAlert] = useState(false)
+  const [invalidAlert, setInvalidAlert] = useState(false)
 
-  console.log(user)
+  useEffect(() => {
+    setGoals(user?.goals)
+  }, [user])
 
   return (
-    <div className='mx-auto px-4 sm:px-6 lg:px-8'>
-      <h1 className='text-3xl md:text-4xl font-bold text-violet-900 mb-6 mt-5 max-sm:text-center max-sm:mt-10'>
-        Savings Goals
-      </h1>
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-        <CurrentGoals goals={goals} />
-        <NewGoal
-          userId={user?.userId}
-          setGoals={setGoals}
-          token={user?.token}
-        />
+    <>
+      <div className=''>
+        {successAlert && (
+          <RegistrationSuccessAlert
+            message1='Goal added successfully!'
+            message2=''
+          />
+        )}
+        {invalidAlert && (
+          <InvalidCredentialsAlert
+            message1='Failed to add goal. Please try again.'
+            message2=''
+          />
+        )}
       </div>
-      <SavingTips />
-    </div>
+      <div className='mx-auto px-4 sm:px-6 lg:px-8'>
+        <h1 className='text-3xl md:text-4xl font-bold text-violet-900 mb-6 mt-5 max-sm:text-center max-sm:mt-10'>
+          Savings Goals
+        </h1>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+          <CurrentGoals goals={goals} />
+          <NewGoal
+            userId={user?.userId}
+            setGoals={setGoals}
+            setSuccessAlert={setSuccessAlert} // Pass setSuccessAlert
+            setInvalidAlert={setInvalidAlert} // Pass setInvalidAlert
+            token={user?.token}
+          />
+        </div>
+        <SavingTips />
+      </div>
+    </>
   )
 }
 
@@ -39,25 +63,33 @@ function CurrentGoals ({ goals }) {
     return daysLeft > 0 ? daysLeft : 0
   }
 
+  const calculateProgress = (amount, targetAmount) => {
+    if (targetAmount <= 0) return 0 // Avoid division by 0
+    return (amount / targetAmount) * 100 // Calculate the percentage of completion
+  }
+
   return (
     <div className='bg-white shadow-lg rounded-lg p-6'>
       <div className='text-xl font-semibold text-gray-900 mb-4'>
         Current Goals
       </div>
       <div>
-        {goals.length > 0 ? (
+        {goals && goals.length > 0 ? (
           goals.map(goal => (
             <div key={goal.id} className='mb-6'>
               <div className='flex justify-between mb-2'>
                 <span className='font-semibold'>{goal.description}</span>
                 <span>{calculateDaysLeft(goal.targetDate)} days left</span>
               </div>
-              {/* Progress Bar (Placeholder) */}
+              {/* Progress Bar (Working) */}
               <div className='h-2 bg-gray-200 rounded-full'>
                 <div
                   className='h-2 bg-blue-500 rounded-full'
                   style={{
-                    width: `${(goal.amount / goal.targetAmount) * 100}%`
+                    width: `${calculateProgress(
+                      goal.amount,
+                      goal.targetAmount
+                    )}%`
                   }}
                 ></div>
               </div>
@@ -75,7 +107,13 @@ function CurrentGoals ({ goals }) {
   )
 }
 
-function NewGoal ({ userId, setGoals }) {
+function NewGoal ({
+  userId,
+  setGoals,
+  setSuccessAlert,
+  setInvalidAlert,
+  token
+}) {
   const [goalName, setGoalName] = useState('')
   const [targetAmount, setTargetAmount] = useState('')
   const [targetDate, setTargetDate] = useState('')
@@ -101,13 +139,18 @@ function NewGoal ({ userId, setGoals }) {
       const res = await axios.post(`${API_KEY}/goal`, newGoal)
       setGoals(prevGoals => [...prevGoals, res.data])
 
-      setGoalName('')
-      setTargetAmount('')
-      setTargetDate('')
-      dispatch(fetchData(token))
+      if (res.data) {
+        setGoalName('')
+        setTargetAmount('')
+        setTargetDate('')
+        dispatch(fetchData(token))
+        setSuccessAlert(true)
+        setTimeout(() => setSuccessAlert(false), 5000) // Hide the success alert after 5 seconds
+      }
     } catch (error) {
       console.error('Error adding goal:', error)
-      alert('Failed to add goal.')
+      setInvalidAlert(true)
+      setTimeout(() => setInvalidAlert(false), 5000) // Hide the invalid alert after 5 seconds
     }
   }
 

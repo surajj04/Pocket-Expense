@@ -2,10 +2,10 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchData } from '../store/userSlice'
+import { useNavigate } from 'react-router-dom'
 
 const API_KEY = import.meta.env.VITE_APP_API_BASE_URL
 
-// Reusable Input Field Component
 const InputField = ({ label, value, onChange, placeholder = '' }) => (
   <div>
     <label className='block text-gray-700 text-sm font-bold mb-2'>
@@ -25,6 +25,8 @@ const InputField = ({ label, value, onChange, placeholder = '' }) => (
 const BudgetSetupPage = () => {
   const user = useSelector(state => state.user.user)
   const dispatch = useDispatch()
+
+  const navigate = useNavigate()
 
   const [monthlyBudget, setMonthlyBudget] = useState('')
   const [bills, setBills] = useState('')
@@ -62,7 +64,7 @@ const BudgetSetupPage = () => {
       if (res.data?.budgetId > 0) {
         alert('Budget setup completed successfully!')
         dispatch(fetchData(user?.token))
-        window.location.href = '/budget'
+        navigate('/budget')
       } else {
         alert('Failed to save budget. Please try again.')
       }

@@ -17,17 +17,16 @@ export default function DashboardPage () {
   const user = useSelector(state => state.user.user)
 
   const [currentBudget, setCurrentBudget] = useState(
-    user?.budgets[user.budgets.length - 1]
+    user?.budgets?.[user.budgets.length - 1] || {}
   )
 
   const [score, setScore] = useState(0)
   const [totalExpenses, setTotalExpenses] = useState(0)
 
-  // Calculate total expenses
   useEffect(() => {
     if (user?.expenses) {
       const total = user.expenses.reduce(
-        (acc, expense) => acc + expense.amount,
+        (acc, expense) => acc + (expense.amount || 0),
         0
       )
       setTotalExpenses(total)
@@ -35,7 +34,7 @@ export default function DashboardPage () {
   }, [user?.expenses])
 
   useEffect(() => {
-    if (currentBudget) {
+    if (currentBudget?.currentBalance && currentBudget?.monthlyBudget) {
       const financialScore =
         Math.round(
           (currentBudget.currentBalance / currentBudget.monthlyBudget) * 100
@@ -52,6 +51,17 @@ export default function DashboardPage () {
     }
   }, [currentBudget])
 
+  const currentBalance = currentBudget?.currentBalance ?? 0
+  const monthlyBudget = currentBudget?.monthlyBudget ?? 1
+  const financialHealthMessage =
+    score >= 80
+      ? 'Excellent financial health! 🎉'
+      : score >= 60
+      ? "You're doing well! Keep it up! 👍"
+      : score >= 40
+      ? 'Moderate financial health. Try to save more! 💰'
+      : 'Needs improvement. Focus on savings! ⚠️'
+
   return (
     <div className='space-y-8 mx-auto px-4 sm:px-6 lg:px-8  max-sm:mt-10 max-sm:mb-30'>
       <h1 className='text-3xl md:text-4xl font-bold text-violet-900 mb-6 mt-5 max-sm:text-center'>
@@ -61,7 +71,7 @@ export default function DashboardPage () {
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
         <SummaryCard
           title='Total Savings'
-          amount={`₹${currentBudget?.currentBalance}`}
+          amount={`₹${currentBalance}`}
           subtitle='Keep it up!'
           icon={<Trophy className='h-6 w-6 sm:h-8 sm:w-8 text-yellow-500' />}
         />
@@ -76,15 +86,7 @@ export default function DashboardPage () {
         <SummaryCard
           title='Financial Health Score'
           amount={`${Math.round(score)} / 100`}
-          subtitle={
-            score >= 80
-              ? 'Excellent financial health! 🎉'
-              : score >= 60
-              ? "You're doing well! Keep it up! 👍"
-              : score >= 40
-              ? 'Moderate financial health. Try to save more! 💰'
-              : 'Needs improvement. Focus on savings! ⚠️'
-          }
+          subtitle={financialHealthMessage}
           icon={<Zap className='h-6 w-6 sm:h-8 sm:w-8 text-blue-500' />}
         />
       </div>

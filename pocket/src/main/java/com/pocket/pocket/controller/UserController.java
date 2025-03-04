@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
 
     @Autowired
@@ -83,7 +82,6 @@ public class UserController {
 
     @PutMapping("/updateProfile")
     public UserDetail updateProfile(@RequestBody UserDetail user) {
-        System.out.println("update method called....");
         return service.updateUser(user);
     }
 

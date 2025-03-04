@@ -1,9 +1,13 @@
+import axios from 'axios'
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import RegistrationSuccessAlert from '../components/SuccessAlert'
+import InvalidCredentialsAlert from '../components/InvalidAlert'
 
 const API_KEY = import.meta.env.VITE_APP_API_BASE_URL
 
 const RegistrationForm = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,6 +22,9 @@ const RegistrationForm = () => {
 
   const [stateOptions, setStateOptions] = useState([])
   const [cityOptions, setCityOptions] = useState([])
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false)
+  const [showErrorAlert, setShowErrorAlert] = useState(false)
+  const [showAgeErrorAlert, setShowAgeErrorAlert] = useState(false)
 
   const stateCityMap = {
     India: {
@@ -367,8 +374,37 @@ const RegistrationForm = () => {
     }
   }
 
+  const calculateAge = dob => {
+    const today = new Date()
+    const birthDate = new Date(dob)
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const month = today.getMonth()
+    const day = today.getDate()
+
+    // If the birthday hasn't occurred yet this year, subtract 1 from age
+    if (
+      month < birthDate.getMonth() ||
+      (month === birthDate.getMonth() && day < birthDate.getDate())
+    ) {
+      age -= 1
+    }
+    return age
+  }
+
   const handleSubmit = async e => {
     e.preventDefault()
+
+    const age = calculateAge(formData.dob)
+
+    // Validate if the user is 18 or older
+    if (age < 18) {
+      setShowAgeErrorAlert(true)
+      setTimeout(() => {
+        setShowAgeErrorAlert(false)
+      }, 5000) // Hide age error alert after 5 seconds
+      return
+    }
+
     if (formData.password === formData.confirmPassword) {
       try {
         const res = await axios.post(`${API_KEY}/register`, {
@@ -383,22 +419,39 @@ const RegistrationForm = () => {
           token: ''
         })
 
-        if (res.status == 200) {
-          return (
-            <RegistrationSuccessAlert
-              message1={'Registration Successful!'}
-              message2={'You can now log in to your account.'}
-            />
-          )
+        if (res.status === 200) {
+          setShowSuccessAlert(true)
+          setTimeout(() => {
+            setShowSuccessAlert(false)
+            setFormData({
+              name: '',
+              email: '',
+              password: '',
+              confirmPassword: '',
+              gender: '',
+              dob: '',
+              country: '',
+              state: '',
+              city: ''
+            }) // Reset form after success
+            navigate('/login') // Navigate to login page after success
+          }, 2000) // Hide success alert after 5 seconds
+        } else {
+          setShowErrorAlert(true)
+          setTimeout(() => {
+            setShowErrorAlert(false)
+          }, 2000) // Hide error alert after 5 seconds
         }
       } catch (error) {
         console.error(error)
+        setShowErrorAlert(true)
+        setTimeout(() => {
+          setShowErrorAlert(false)
+        }, 5000) // Hide error alert after 5 seconds
       }
     } else {
       window.alert('Passwords do not match. Please try again.')
     }
-
-    console.log(formData)
   }
 
   return (
@@ -411,9 +464,32 @@ const RegistrationForm = () => {
           Fill in the details below to register
         </p>
 
+        {showSuccessAlert && (
+          <RegistrationSuccessAlert
+            message1={'Registration Successful!'}
+            message2={'You can now log in to your account.'}
+          />
+        )}
+
+        {showErrorAlert && (
+          <InvalidCredentialsAlert
+            message1={'Error!'}
+            message2={
+              'There was an issue with your registration. Please try again.'
+            }
+          />
+        )}
+
+        {showAgeErrorAlert && (
+          <InvalidCredentialsAlert
+            message1={'Error!'}
+            message2={'You must be at least 18 years old to register.'}
+          />
+        )}
+
         <form
           onSubmit={handleSubmit}
-          className='sm:grid  sm:grid-cols-2 gap-6 space-y-4'
+          className='sm:grid sm:grid-cols-2 gap-6 space-y-4'
         >
           {/* Full Name */}
           <div className='relative'>
@@ -555,83 +631,76 @@ const RegistrationForm = () => {
             >
               <option value=''>Select Country</option>
               <option value='India'>India</option>
+              {/* You can add other countries here */}
             </select>
           </div>
 
           {/* State */}
-          {formData.country === 'India' && (
-            <div className='relative'>
-              <label
-                htmlFor='state'
-                className='block text-sm font-medium text-gray-700'
-              >
-                State
-              </label>
-              <select
-                id='state'
-                name='state'
-                value={formData.state}
-                onChange={handleStateChange}
-                className='mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                required
-              >
-                <option value=''>Select State</option>
-                {stateOptions.map(state => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className='relative'>
+            <label
+              htmlFor='state'
+              className='block text-sm font-medium text-gray-700'
+            >
+              State
+            </label>
+            <select
+              id='state'
+              name='state'
+              value={formData.state}
+              onChange={handleStateChange}
+              className='mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              required
+            >
+              <option value=''>Select State</option>
+              {stateOptions.map(state => (
+                <option key={state} value={state}>
+                  {state}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* City */}
-          {formData.state && (
-            <div className='relative'>
-              <label
-                htmlFor='city'
-                className='block text-sm font-medium text-gray-700'
-              >
-                City
-              </label>
-              <select
-                id='city'
-                name='city'
-                value={formData.city}
-                onChange={handleChange}
-                className='mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                required
-              >
-                <option value=''>Select City</option>
-                {cityOptions.map(city => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className='relative'>
+            <label
+              htmlFor='city'
+              className='block text-sm font-medium text-gray-700'
+            >
+              City
+            </label>
+            <select
+              id='city'
+              name='city'
+              value={formData.city}
+              onChange={handleChange}
+              className='mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              required
+            >
+              <option value=''>Select City</option>
+              {cityOptions.map(city => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          {/* Submit Button */}
-          <div className='col-span-2'>
+          <div className='mt-6'>
             <button
               type='submit'
-              className='w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:opacity-90 transition duration-200 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl'
+              className='w-full py-3 px-4 bg-blue-600 text-white text-lg font-medium rounded-lg hover:bg-blue-700'
             >
               Register
             </button>
           </div>
-        </form>
 
-        <p className='text-center text-sm text-gray-600 mt-4'>
-          Already have an account? &ensp;
-          <Link
-            to='/login'
-            className='text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-200'
-          >
-            Sign in
-          </Link>
-        </p>
+          <p className='text-center text-sm text-gray-500 mt-4'>
+            Already have an account?{' '}
+            <Link to='/login' className='text-blue-600'>
+              Log in here
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   )

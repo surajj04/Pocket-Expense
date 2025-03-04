@@ -99,7 +99,6 @@ public class FileController {
                 .user(prompt)
                 .call()
                 .content();
-
         return result;
     }
 }

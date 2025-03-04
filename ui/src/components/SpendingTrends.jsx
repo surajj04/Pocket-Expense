@@ -9,8 +9,6 @@ import {
 } from 'recharts'
 
 const SpendingTrends = ({ dailyTrends }) => {
-  console.log(dailyTrends)
-
   // Convert dailyTrends object into an array for recharts
   const data = Object.keys(dailyTrends).map(day => ({
     name: day.substring(0, 3), // Shorten day names (Mon, Tue, etc.)

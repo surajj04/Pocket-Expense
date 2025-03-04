@@ -26,36 +26,32 @@ export default function ReportsPage () {
   const [reportData, setReportData] = useState(user?.budgets || [])
 
   useEffect(() => {
-    // Update reportData when user or their budgets change
     if (user?.budgets) {
       setReportData(user.budgets)
     }
   }, [user])
 
-  // Filter data by selected year
   const filteredData = reportData.filter(
     item => new Date(item.date).getFullYear() === selectedYear
   )
 
-  // Check if data exists for the selected year
   const noDataForYear = filteredData.length === 0
 
-  // Format data for monthly report chart
   const monthlyData = filteredData.map(item => ({
     name: new Date(item.date).toLocaleString('default', { month: 'short' }),
     amount: item.monthlyBudget - item.currentBalance
   }))
 
   const latestReport = filteredData[0] || {}
+
   const categoryData = [
-    { name: 'Food', value: user?.totalExpense.food || 0 },
-    { name: 'Travel', value: user?.totalExpense.travel || 0 },
-    { name: 'Shopping', value: user?.totalExpense.shopping || 0 },
-    { name: 'Bills', value: user?.totalExpense.bills || 0 },
-    { name: 'Other', value: user?.totalExpense.other || 0 }
+    { name: 'Food', value: user?.totalExpense?.food || 0 },
+    { name: 'Travel', value: user?.totalExpense?.travel || 0 },
+    { name: 'Shopping', value: user?.totalExpense?.shopping || 0 },
+    { name: 'Bills', value: user?.totalExpense?.bills || 0 },
+    { name: 'Other', value: user?.totalExpense?.other || 0 }
   ]
 
-  // Prepare data for weekly highlights
   const weeklyExpenses = user?.expenses || []
   const weeklyHighlights = weeklyExpenses.slice(-4).map(expense => (
     <li key={expense.expenseId}>
@@ -63,13 +59,16 @@ export default function ReportsPage () {
     </li>
   ))
 
+  const availableYears = Array.from(
+    new Set(user?.budgets?.map(item => new Date(item.date).getFullYear()))
+  ).sort((a, b) => b - a) // Sort years in descending order
+
   return (
     <div className='mx-auto px-4 sm:px-6 lg:px-8'>
       <h1 className='text-3xl md:text-4xl max-sm:mx-3 font-bold text-violet-900 mb-6 mt-5 max-sm:text-center'>
         Reports
       </h1>
 
-      {/* Year Selector */}
       <div className='mb-6'>
         <label htmlFor='year-selector' className='font-semibold mr-4'>
           Select Year:
@@ -80,10 +79,11 @@ export default function ReportsPage () {
           value={selectedYear}
           onChange={e => setSelectedYear(parseInt(e.target.value))}
         >
-          {/* Add more years as needed */}
-          <option value={2024}>2024</option>
-          <option value={2025}>2025</option>
-          <option value={2026}>2026</option>
+          {availableYears.map(year => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -94,7 +94,6 @@ export default function ReportsPage () {
         </TabsList>
         <TabsContent value='monthly'>
           <div className='space-y-8'>
-            {/* Display message if no data for the selected year */}
             {noDataForYear ? (
               <Card>
                 <CardHeader>
